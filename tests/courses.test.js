@@ -1,6 +1,5 @@
 const { assert } = require('chai');
 const requests = require('./utils/requests');
-const mocks = require('./utils/mocks');
 const { knex, cleanDb, sanitizeResponse } = require('./utils/db');
 
 // Starts the app

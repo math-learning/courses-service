@@ -1,6 +1,6 @@
 const createError = require('http-errors');
 
-const { processDbResponse, snakelize } = require('../utils/dbUtils');
+const { processDbResponse } = require('../utils/dbUtils');
 const configs = require('../../configs');
 const knex = require('knex')(configs.db); // eslint-disable-line
 
@@ -9,12 +9,13 @@ const knex = require('knex')(configs.db); // eslint-disable-line
  *
  */
 const getCourses = async ({ page, limit }) => {
-
-  let pageSize = configs.coursesConfig.pageSize;
-
+  const { pageSize } = configs.coursesConfig.pageSize;
+  const offset = limit !== null && limit !== undefined ? limit : pageSize;
   return knex('courses')
     .select()
     .returning('*')
+    .offset(page)
+    .limit(offset)
     .then(processDbResponse)
     .then((response) => {
       console.log(response);
@@ -60,5 +61,6 @@ const addCourse = async ({
 };
 
 module.exports = {
-  getCourses
+  getCourses,
+  addCourse
 };

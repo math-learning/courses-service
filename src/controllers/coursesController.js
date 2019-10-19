@@ -1,6 +1,6 @@
 const createError = require('http-errors');
 const expressify = require('expressify')();
-const logger = require('../utils/logger.js');
+// const logger = require('../utils/logger.js');
 const coursesService = require('../services/coursesService');
 
 /**
@@ -15,10 +15,9 @@ const getCourses = async (req, res) => {
 };
 
 const addCourse = async (req, res) => {
-
   const { context } = req;
   const { name, description } = req.body;
-  const { email, id } = context.googleProfile;
+  const { id } = context.googleProfile;
 
   // TODO: validar el rol del usuario.
 
@@ -36,27 +35,27 @@ const addCourse = async (req, res) => {
   return res.status(201).json({});
 };
 
-const updateCourse = async (req, res) => {
-  return res.status(200).json({});
-};
+// const updateCourse = async (req, res) => {
+//   return res.status(200).json({});
+// };
 
-const updateCourseUsers = async (req, res) => {
-  return res.status(200).json({});
-};
+// const updateCourseUsers = async (req, res) => {
+//   return res.status(200).json({});
+// };
 
-const getCourseUsers = async (req, res) => {
-  return res.status(200).json({});
-};
+// const getCourseUsers = async (req, res) => {
+//   return res.status(200).json({});
+// };
 
-const deleteCourse = async (req, res) => {
-  return res.status(200).json({});
-};
+// const deleteCourse = async (req, res) => {
+//   return res.status(200).json({});
+// };
 
 module.exports = expressify({
   getCourses,
   addCourse,
-  updateCourse,
-  updateCourseUsers,
-  getCourseUsers,
-  deleteCourse,
+  // updateCourse,
+  // updateCourseUsers,
+  // getCourseUsers,
+  // deleteCourse,
 });
