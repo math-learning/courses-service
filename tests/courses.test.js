@@ -24,15 +24,16 @@ describe('Integration courses tests', () => {
 
     describe('When there are courses', () => {
       let expectedCourse;
-
+      // Set up database
       beforeEach(async () => {
         expectedCourse = {
-          courseId, name: courseName, description: courseDescription
+          id: courseId, name: courseName, description: courseDescription
         };
 
+        await knex('courses').del();
         await knex('courses').insert([
           {
-            course_id: 'course id',
+            id: 'coursename',
             name: 'course name',
             description: 'course description',
           },
@@ -42,7 +43,7 @@ describe('Integration courses tests', () => {
           {
             course_id: 'course id',
             user_id: 'user id',
-            role: 'role'
+            role: 'admin'
           },
         ]);
         await knex('guides').del();
@@ -61,7 +62,7 @@ describe('Integration courses tests', () => {
 
       it('status is OK', () => assert.equal(response.status, 200));
 
-      it('body has the user', () => assert.deepEqual(sanitizeResponse(response.body), expectedCourse));
+      it('body has the course', () => assert.deepEqual(response.body, expectedCourse));
     });
   });
 });

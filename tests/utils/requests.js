@@ -10,6 +10,12 @@ const status = () => {
   return fetch(statusUrl);
 };
 
+const getCourses = async () => {
+  const coursesUrl = `${baseUrl}/courses`;
+  const response = await fetch(coursesUrl);
+  return { status: response.status, body: await response.json() };
+};
+
 const login = async ({ token }) => {
   const profileUrl = `${baseUrl}/login`;
 
@@ -61,5 +67,6 @@ module.exports = {
   signup: errorWrapper(signup),
   login: errorWrapper(login),
   getProfile: errorWrapper(getProfile),
-  status: errorWrapper(status)
+  status: errorWrapper(status),
+  getCourses: errorWrapper(getCourses),
 };

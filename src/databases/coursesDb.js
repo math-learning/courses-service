@@ -13,7 +13,7 @@ const getCourses = async ({ page, limit }) => {
   const offset = limit !== null && limit !== undefined ? limit : pageSize;
   return knex('courses')
     .select()
-    .returning('*')
+    .returning('id, name, description')
     .offset(page)
     .limit(offset)
     .then(processDbResponse)
