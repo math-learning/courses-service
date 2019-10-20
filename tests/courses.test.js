@@ -1,55 +1,81 @@
 const { assert } = require('chai');
 const requests = require('./utils/requests');
-const { knex, cleanDb, sanitizeResponse } = require('./utils/db');
+const { knex, cleanDb } = require('./utils/db');
 
 // Starts the app
 require('../src/app.js');
 
 describe('Integration courses tests', () => {
   let response;
+  const fakeToken = 'diego';
 
   before(() => cleanDb());
   afterEach(() => cleanDb());
 
   describe('Get courses', () => {
-    let courseName;
-    let courseId;
-    let courseDescription;
-
-    beforeEach(() => {
-      courseId = 'coursename';
-      courseName = 'course name';
-      courseDescription = 'course description';
-    });
 
     describe('When there are courses', () => {
-      let expectedCourse;
+      let expectedCourses;
       // Set up database
       beforeEach(async () => {
-        expectedCourse = {
-          id: courseId, name: courseName, description: courseDescription
-        };
+        expectedCourses = [
+          {
+            id: 'coursename2',
+            name: 'course name 2',
+            description: 'course description 2',
+          },
+          {
+            id: 'coursename1',
+            name: 'course name 1',
+            description: 'course description 1',
+          },
+        ];
 
         await knex('courses').del();
         await knex('courses').insert([
           {
-            id: 'coursename',
-            name: 'course name',
-            description: 'course description',
+            id: 'coursename1',
+            name: 'course name 1',
+            description: 'course description 1',
+          },
+          {
+            id: 'coursename2',
+            name: 'course name 2',
+            description: 'course description 2',
+          },
+          {
+            id: 'coursename3',
+            name: 'course name 3',
+            description: 'course description 3',
           },
         ]);
         await knex('course_users').del();
         await knex('course_users').insert([
           {
-            course_id: 'course id',
-            user_id: 'user id',
+            course_id: 'coursename2',
+            user_id: 'diego',
             role: 'admin'
+          },
+          {
+            course_id: 'coursename1',
+            user_id: 'diego',
+            role: 'admin'
+          },
+          {
+            course_id: 'coursename3',
+            user_id: 'pedro',
+            role: 'admin'
+          },
+          {
+            course_id: 'coursename3',
+            user_id: 'joaco',
+            role: 'student'
           },
         ]);
         await knex('guides').del();
         await knex('guides').insert([
           {
-            course_id: 'course id',
+            course_id: 'coursename',
             guide_id: 'guide id',
             description: 'description',
           },
@@ -57,12 +83,12 @@ describe('Integration courses tests', () => {
       });
 
       beforeEach(async () => {
-        response = await requests.getCourses();
+        response = await requests.getCourses({ token: fakeToken });
       });
 
       it('status is OK', () => assert.equal(response.status, 200));
 
-      it('body has the course', () => assert.deepEqual(response.body, expectedCourse));
+      it('body has the course', () => assert.deepEqual(response.body, expectedCourses));
     });
   });
 });

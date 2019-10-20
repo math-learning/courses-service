@@ -1,6 +1,14 @@
 const courses = require('../databases/coursesDb');
 
-const getCourses = ({ page, limit }) => courses.getCourses({ page, limit });
+const getCourse = async ({ id }) => courses.getCourse({ id });
+
+const getCourses = async ({ page, limit, userToken }) => {
+  // TODO: users service integration for the moment we use the token
+  const userId = userToken;
+  const coursesByUser = await courses.getCoursesByUser({ page, limit, userId });
+  const result = coursesByUser.map((c) => getCourse({ id: c.courseId }));
+  return Promise.all(result);
+};
 
 const addCourse = ({ description, name }) => {
   const id = name.toLowerCase().replace(' ', '');
@@ -13,5 +21,5 @@ const addCourse = ({ description, name }) => {
 
 module.exports = {
   getCourses,
-  addCourse
+  addCourse,
 };

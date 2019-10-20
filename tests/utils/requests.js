@@ -10,16 +10,9 @@ const status = () => {
   return fetch(statusUrl);
 };
 
-const getCourses = async () => {
+const getCourses = async ({ token }) => {
   const coursesUrl = `${baseUrl}/courses`;
-  const response = await fetch(coursesUrl);
-  return { status: response.status, body: await response.json() };
-};
-
-const login = async ({ token }) => {
-  const profileUrl = `${baseUrl}/login`;
-
-  const response = await fetch(profileUrl, {
+  const response = await fetch(coursesUrl, {
     headers: {
       authorization: token
     }
@@ -27,31 +20,6 @@ const login = async ({ token }) => {
   return { status: response.status, body: await response.json() };
 };
 
-const signup = async ({ token, userMetadata }) => {
-  const profileUrl = `${baseUrl}/signup`;
-
-  const response = await fetch(profileUrl, {
-    method: 'post',
-    body: JSON.stringify(userMetadata),
-    headers: {
-      authorization: token,
-      'Content-Type': 'application/json'
-    }
-  });
-  return { status: response.status, body: await response.json() };
-};
-
-
-const getProfile = async ({ userId, token }) => {
-  const profileUrl = `${baseUrl}/users/${userId}/profile`;
-
-  const response = await fetch(profileUrl, {
-    headers: {
-      authorization: token
-    }
-  });
-  return { status: response.status, body: await response.json() };
-};
 
 function errorWrapper(funct) {
   return function inner(...args) {
@@ -64,9 +32,6 @@ function errorWrapper(funct) {
 }
 
 module.exports = {
-  signup: errorWrapper(signup),
-  login: errorWrapper(login),
-  getProfile: errorWrapper(getProfile),
   status: errorWrapper(status),
   getCourses: errorWrapper(getCourses),
 };

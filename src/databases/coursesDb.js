@@ -4,16 +4,33 @@ const { processDbResponse } = require('../utils/dbUtils');
 const configs = require('../../configs');
 const knex = require('knex')(configs.db); // eslint-disable-line
 
+const COURSES_TABLE = 'courses';
+const COURSE_USERS_TABLE = 'course_users';
 /**
  * Get courses.
  *
  */
+
+const getCoursesByUser = async ({ userId, page, limit }) => knex(COURSE_USERS_TABLE)
+  .select()
+  .where({ user_id: userId })
+  .returning('*')
+  .offset(page)
+  .limit(limit)
+  .then(processDbResponse)
+  .then((response) => {
+    if (!response) {
+      throw new createError.NotFound('Courses not found');
+    }
+    return response;
+  });
+
 const getCourses = async ({ page, limit }) => {
   const { pageSize } = configs.coursesConfig.pageSize;
   const offset = limit !== null && limit !== undefined ? limit : pageSize;
-  return knex('courses')
+  return knex(COURSES_TABLE)
     .select()
-    .returning('id, name, description')
+    .returning('*')
     .offset(page)
     .limit(offset)
     .then(processDbResponse)
@@ -23,9 +40,14 @@ const getCourses = async ({ page, limit }) => {
         throw new createError.NotFound('Courses not found');
       }
       return response;
-    })
-    .catch(console.log);
+    });
 };
+
+const getCourse = async ({ id }) => knex(COURSES_TABLE)
+  .select()
+  .where({ id })
+  .returning('*')
+  .first();
 
 const newCourse = ({ trx, name, description }) => {
   const id = name.toLowerCase().replace(' ', '');
@@ -62,5 +84,7 @@ const addCourse = async ({
 
 module.exports = {
   getCourses,
-  addCourse
+  addCourse,
+  getCoursesByUser,
+  getCourse,
 };

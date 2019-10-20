@@ -7,17 +7,27 @@ const coursesService = require('../services/coursesService');
  * Get courses.
  */
 const getCourses = async (req, res) => {
-  const { page, limit } = req.query;
+  let { page, limit } = req.query;
+  const { authorization } = req.headers;
 
-  const courses = await coursesService.getCourses({ page, limit });
+  // TODO: default values
+  page = !page ? 0 : page;
+  limit = !limit ? 10 : limit;
+
+  if (!authorization) {
+    return Promise.reject(createError.Unauthorized());
+  }
+
+  const courses = await coursesService.getCourses({ page, limit, userToken: authorization });
 
   return res.status(200).json(courses);
 };
 
 const addCourse = async (req, res) => {
   const { context } = req;
-  const { name, description } = req.body;
   const { id } = context.googleProfile;
+  const { name, description } = req.body;
+
 
   // TODO: validar el rol del usuario.
 
