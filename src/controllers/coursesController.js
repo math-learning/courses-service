@@ -24,18 +24,19 @@ const getCourses = async (req, res) => {
 };
 
 const addCourse = async (req, res) => {
-  const { context } = req;
-  const { id } = context.googleProfile;
+  const { authorization } = req.headers;
   const { name, description } = req.body;
-
-
   // TODO: validar el rol del usuario.
+
+  if (!authorization) {
+    return Promise.reject(createError.Unauthorized());
+  }
 
   if (!name || !description) {
     return Promise.reject(createError.BadRequest('name or description have not been provided'));
   }
 
-  const creatorId = id;
+  const creatorId = authorization;
   await coursesService.addCourse({
     name,
     description,

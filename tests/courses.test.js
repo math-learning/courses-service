@@ -13,7 +13,6 @@ describe('Integration courses tests', () => {
   afterEach(() => cleanDb());
 
   describe('Get courses', () => {
-
     describe('When there are courses', () => {
       let expectedCourses;
       // Set up database
@@ -89,6 +88,34 @@ describe('Integration courses tests', () => {
       it('status is OK', () => assert.equal(response.status, 200));
 
       it('body has the course', () => assert.deepEqual(response.body, expectedCourses));
+    });
+  });
+
+  describe('Add course', () => {
+    let courseToBeAdded;
+
+    beforeEach(() => {
+      const name = 'curso';
+      const description = 'un curso mas';
+      courseToBeAdded = { name, description, id: name };
+    });
+
+    describe('When is successfully added', () => {
+      beforeEach(async () => {
+        response = await requests.addCourse({
+          name: courseToBeAdded.name,
+          description: courseToBeAdded.description,
+          token: fakeToken
+        });
+      });
+
+      it('status is OK', () => assert.equal(response.status, 201));
+
+      it('get course should return the course added', async () => {
+        response = await requests.getCourses({ token: fakeToken });
+        // const courses = response.body;
+        assert.equal(response.status, 200);
+      });
     });
   });
 });

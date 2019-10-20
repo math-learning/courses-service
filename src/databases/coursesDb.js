@@ -49,14 +49,17 @@ const getCourse = async ({ id }) => knex(COURSES_TABLE)
   .returning('*')
   .first();
 
-const newCourse = ({ trx, name, description }) => {
-  const id = name.toLowerCase().replace(' ', '');
-  return trx.insert({
-    id,
-    name,
-    description,
-  }).into('courses');
-};
+const newCourse = ({
+  trx,
+  name,
+  description,
+  courseId,
+}) => trx.insert({
+  id: courseId,
+  name,
+  description,
+})
+  .into('courses');
 
 
 const createCourseCreator = ({
@@ -65,8 +68,8 @@ const createCourseCreator = ({
   creatorId,
 }) => trx
   .insert({
-    userId: creatorId,
-    courseId,
+    user_id: creatorId,
+    course_id: courseId,
     role: 'admin'
   }).into('course_users');
 
@@ -78,8 +81,17 @@ const addCourse = async ({
   creatorId,
 }) => {
   const trx = await knex.transaction();
-  newCourse({ trx, name, description })
-    .then(() => createCourseCreator({ trx, courseId, creatorId }));
+  await newCourse({
+    trx,
+    name,
+    description,
+    courseId,
+  });
+  await createCourseCreator({
+    trx,
+    courseId,
+    creatorId,
+  });
 };
 
 module.exports = {

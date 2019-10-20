@@ -20,6 +20,19 @@ const getCourses = async ({ token }) => {
   return { status: response.status, body: await response.json() };
 };
 
+const addCourse = async ({ token, name, description }) => {
+  const addCourseUrl = `${baseUrl}/courses`;
+  const data = { name, description };
+  const response = await fetch(addCourseUrl, {
+    method: 'POST',
+    headers: {
+      authorization: token,
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify(data),
+  });
+  return { status: response.status, body: await response.json() };
+};
 
 function errorWrapper(funct) {
   return function inner(...args) {
@@ -31,7 +44,9 @@ function errorWrapper(funct) {
   };
 }
 
+
 module.exports = {
   status: errorWrapper(status),
   getCourses: errorWrapper(getCourses),
+  addCourse: errorWrapper(addCourse),
 };
