@@ -10,10 +10,10 @@ const getCourses = async ({ page, limit, userToken }) => {
   return Promise.all(result);
 };
 
-const addCourse = ({ description, name, creatorId }) => {
+const addCourse = async ({ description, name, creatorId }) => {
   // TODO: hacer esto mejor
   const id = name.toLowerCase().replace(' ', '');
-  courses.addCourse({
+  await courses.addCourse({
     name,
     description,
     creatorId,

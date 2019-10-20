@@ -11,7 +11,11 @@ const COURSE_USERS_TABLE = 'course_users';
  *
  */
 
-const getCoursesByUser = async ({ userId, page, limit }) => knex(COURSE_USERS_TABLE)
+const getCoursesByUser = async ({
+  userId,
+  page,
+  limit
+}) => knex(COURSE_USERS_TABLE)
   .select()
   .where({ user_id: userId })
   .returning('*')
@@ -22,10 +26,16 @@ const getCoursesByUser = async ({ userId, page, limit }) => knex(COURSE_USERS_TA
     if (!response) {
       throw new createError.NotFound('Courses not found');
     }
+    if (!response.length) {
+      return [response];
+    }
     return response;
   });
 
-const getCourses = async ({ page, limit }) => {
+const getCourses = async ({
+  page,
+  limit
+}) => {
   const { pageSize } = configs.coursesConfig.pageSize;
   const offset = limit !== null && limit !== undefined ? limit : pageSize;
   return knex(COURSES_TABLE)
@@ -92,6 +102,7 @@ const addCourse = async ({
     courseId,
     creatorId,
   });
+  await trx.commit();
 };
 
 module.exports = {
