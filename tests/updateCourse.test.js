@@ -1,5 +1,5 @@
 const { assert } = require('chai');
-const requests = require('./utils/requests');
+const requests = require('./utils/coursesRequests');
 const { cleanDb } = require('./utils/db');
 
 // Starts the app
@@ -17,8 +17,7 @@ describe('Add course', () => {
   beforeEach(() => {
     const name = 'curso';
     const description = 'un curso mas';
-    // TODO: course id when changing name
-    finalCourse = { id: 'initialcourse', name, description };
+    finalCourse = { courseId: 'initialcourse', name, description };
   });
 
   describe('When is successfully added', () => {
@@ -29,7 +28,7 @@ describe('Add course', () => {
         token: fakeToken
       });
       response = await requests.updateCourse({
-        id: finalCourse.id,
+        courseId: finalCourse.courseId,
         name: finalCourse.name,
         description: finalCourse.description,
         token: fakeToken
@@ -39,7 +38,7 @@ describe('Add course', () => {
     it('status is OK', () => assert.equal(response.status, 200));
 
     it('get course should return the course updated', async () => {
-      response = await requests.getCourse({ id: finalCourse.id, token: fakeToken });
+      response = await requests.getCourse({ courseId: finalCourse.courseId, token: fakeToken });
       assert.deepEqual(response.body, finalCourse);
     });
   });

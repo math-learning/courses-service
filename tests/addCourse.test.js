@@ -1,5 +1,5 @@
 const { assert } = require('chai');
-const requests = require('./utils/requests');
+const requests = require('./utils/coursesRequests');
 const { cleanDb } = require('./utils/db');
 
 // Starts the app
@@ -14,14 +14,13 @@ describe('Add course', () => {
 
   let courseToBeAdded;
 
-  beforeEach(() => {
-    const name = 'curso';
-    const description = 'un curso mas';
-    courseToBeAdded = { name, description, id: name };
-  });
-
   describe('When is successfully added', () => {
     beforeEach(async () => {
+      courseToBeAdded = {
+        name: 'curso',
+        description: 'un curso mas',
+        id: 'curso',
+      };
       response = await requests.addCourse({
         name: courseToBeAdded.name,
         description: courseToBeAdded.description,

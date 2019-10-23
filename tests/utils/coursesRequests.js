@@ -24,16 +24,16 @@ const getCourses = async ({ token }) => doRequest({
   token,
 });
 
-const deleteCourse = async ({ token, id }) => doRequest({
-  requestUrl: `${baseUrl}/courses/${id}`,
+const deleteCourse = async ({ token, courseId }) => doRequest({
+  requestUrl: `${baseUrl}/courses/${courseId}`,
   params: {
     method: 'DELETE'
   },
   token,
 });
 
-const getCourse = async ({ token, id }) => doRequest({
-  requestUrl: `${baseUrl}/courses/${id}`,
+const getCourse = async ({ token, courseId }) => doRequest({
+  requestUrl: `${baseUrl}/courses/${courseId}`,
   token,
 });
 
@@ -59,18 +59,22 @@ function errorWrapper(funct) {
   };
 }
 
-
 const updateCourse = async ({
-  id,
+  courseId,
   name,
   description,
   token,
 }) => doRequest({
-  requestUrl: `${baseUrl}/courses/${id}`,
+  requestUrl: `${baseUrl}/courses/${courseId}`,
   params: {
     method: 'PUT',
     body: JSON.stringify({ name, description }),
   },
+  token
+});
+
+const getCourseUsers = async ({ courseId, token }) => doRequest({
+  requestUrl: `${baseUrl}/courses/${courseId}/users`,
   token
 });
 
@@ -81,4 +85,5 @@ module.exports = {
   getCourse: errorWrapper(getCourse),
   deleteCourse: errorWrapper(deleteCourse),
   updateCourse: errorWrapper(updateCourse),
+  getCourseUsers: errorWrapper(getCourseUsers),
 };

@@ -19,7 +19,8 @@ module.exports = {
       database: 'courses'
     }
   },
-  coursesConfig: {
-    pageSize: 40
+  dbDefault: {
+    limit: 40,
+    offset: 0,
   }
 };

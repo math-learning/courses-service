@@ -22,6 +22,9 @@ const snakelize = (obj) => {
 
 
 const processDbResponse = (dbObj) => {
+  if (!dbObj) {
+    return dbObj;
+  }
   if (_.isArray(dbObj) && dbObj.length === 0) {
     return null;
   }

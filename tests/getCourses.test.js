@@ -1,6 +1,7 @@
 const { assert } = require('chai');
-const requests = require('./utils/requests');
-const { addThreeMocks, cleanDb } = require('./utils/db');
+const requests = require('./utils/coursesRequests');
+const { cleanDb } = require('./utils/db');
+const { addCourseMocks } = require('./utils/dbMockFactory');
 
 // Starts the app
 require('../src/app.js');
@@ -12,26 +13,12 @@ describe('Get courses', () => {
 
   before(() => cleanDb());
   afterEach(() => cleanDb());
+
   describe('When there are courses', () => {
     let expectedCourses;
-    // Set up database
     beforeEach(async () => {
-      expectedCourses = [
-        {
-          id: 'coursename2',
-          name: 'course name 2',
-          description: 'course description 2',
-        },
-        {
-          id: 'coursename1',
-          name: 'course name 1',
-          description: 'course description 1',
-        },
-      ];
-      await addThreeMocks();
-    });
-
-    beforeEach(async () => {
+      const coursesAndCreators = await addCourseMocks({ coursesNumber: 3, creatorId: fakeToken });
+      expectedCourses = coursesAndCreators.courses;
       response = await requests.getCourses({ token: fakeToken });
     });
 

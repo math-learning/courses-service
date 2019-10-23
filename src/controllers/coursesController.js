@@ -7,12 +7,8 @@ const coursesService = require('../services/coursesService');
  * Get courses.
  */
 const getCourses = async (req, res) => {
-  let { page, limit } = req.query;
+  const { page, limit } = req.query;
   const { token } = req.context;
-
-  // TODO: default values
-  page = !page ? 0 : page;
-  limit = !limit ? 10 : limit;
 
   const courses = await coursesService.getCourses({ page, limit, userToken: token });
 
@@ -22,7 +18,7 @@ const getCourses = async (req, res) => {
 const getCourse = async (req, res) => {
   const { courseId } = req.params;
 
-  const course = await coursesService.getCourse({ id: courseId });
+  const course = await coursesService.getCourse({ courseId });
 
   if (!course) {
     return Promise.reject(createError.NotFound(`Course with id: ${courseId}`));
@@ -80,7 +76,7 @@ const deleteCourse = async (req, res) => {
   if (!courseId) {
     return Promise.reject(createError.BadRequest('course id not provided'));
   }
-  await coursesService.deleteCourse({ id: courseId });
+  await coursesService.deleteCourse({ courseId });
 
   return res.status(200).json({});
 };
@@ -93,10 +89,11 @@ const updateCourse = async (req, res) => {
     return Promise.reject(createError.BadRequest('course id, name or description not provided'));
   }
 
-  await coursesService.updateCourse({ id: courseId, name, description });
+  await coursesService.updateCourse({ courseId, name, description });
 
   return res.status(200).json({});
 };
+
 
 module.exports = expressify({
   getCourses,

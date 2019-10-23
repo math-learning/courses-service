@@ -1,6 +1,6 @@
 const createError = require('http-errors');
 
-const { processDbResponse } = require('../utils/dbUtils');
+const { processDbResponse, snakelize } = require('../utils/dbUtils');
 const configs = require('../../configs');
 const knex = require('knex')(configs.db); // eslint-disable-line
 
@@ -18,10 +18,10 @@ const getCoursesByUser = async ({
   limit
 }) => knex(COURSE_USERS_TABLE)
   .select()
-  .where({ user_id: userId })
+  .where(snakelize({ userId }))
   .returning('*')
-  .offset(page)
-  .limit(limit)
+  .offset(page || configs.dbDefault.offset)
+  .limit(limit || configs.dbDefault.limit)
   .then(processDbResponse)
   .then((response) => {
     if (!response) {
@@ -38,12 +38,11 @@ const getCourses = async ({
   limit
 }) => {
   const { pageSize } = configs.coursesConfig.pageSize;
-  const offset = limit !== null && limit !== undefined ? limit : pageSize;
   return knex(COURSES_TABLE)
     .select()
     .returning('*')
     .offset(page)
-    .limit(offset)
+    .limit(limit || pageSize)
     .then(processDbResponse)
     .then((response) => {
       console.log(response);
@@ -54,23 +53,30 @@ const getCourses = async ({
     });
 };
 
-const getCourse = async ({ id }) => knex(COURSES_TABLE)
+const getCourse = async ({ courseId }) => knex(COURSES_TABLE)
   .select()
-  .where({ id })
+  .where(snakelize({ courseId }))
   .returning('*')
-  .first();
+  .first()
+  .then(processDbResponse)
+  .then((response) => {
+    if (!response) {
+      throw new createError.NotFound(`Course with id: ${courseId} not found`);
+    }
+    return response;
+  });
 
 const newCourse = ({
   trx,
   name,
   description,
   courseId,
-}) => trx.insert({
-  id: courseId,
+}) => trx.insert(snakelize({
+  courseId,
   name,
   description,
-})
-  .into('courses');
+}))
+  .into(COURSES_TABLE);
 
 
 const createCourseCreator = ({
@@ -78,11 +84,11 @@ const createCourseCreator = ({
   courseId,
   creatorId,
 }) => trx
-  .insert({
-    user_id: creatorId,
-    course_id: courseId,
+  .insert(snakelize({
+    userId: creatorId,
+    courseId,
     role: 'admin'
-  }).into('course_users');
+  })).into('course_users');
 
 
 const addCourse = async ({
@@ -107,29 +113,35 @@ const addCourse = async ({
 };
 
 const addUserToCourse = async ({ userId, courseId, role }) => knex(COURSE_USERS_TABLE)
-  .insert({
-    user_id: userId,
-    course_id: courseId,
+  .insert(snakelize({
+    userId,
+    courseId,
     role,
-  });
+  }));
 
-const deleteCourse = async ({ id }) => {
+const deleteCourse = async ({ courseId }) => {
   const trx = await knex.transaction();
   // TODO: delete on cascade?
   await trx.delete()
     .from(COURSES_TABLE)
-    .where({ id });
+    .where(snakelize({ courseId }));
 
   await trx.delete()
     .from(COURSE_USERS_TABLE)
-    .where({ course_id: id });
+    .where(snakelize({ courseId }));
 
   await trx.commit();
 };
 
-const updateCourse = async ({ id, name, description }) => knex(COURSES_TABLE)
+const updateCourse = async ({ courseId, name, description }) => knex(COURSES_TABLE)
   .update({ name, description })
-  .where({ id });
+  .where(snakelize({ courseId }));
+
+// TODO analyze the need for pagination
+const getCourseUsers = async ({ courseId }) => knex(COURSE_USERS_TABLE)
+  .select('user_id', 'role')
+  .where(snakelize({ courseId }))
+  .then(processDbResponse);
 
 module.exports = {
   getCourses,
@@ -139,4 +151,5 @@ module.exports = {
   addUserToCourse,
   deleteCourse,
   updateCourse,
+  getCourseUsers,
 };
