@@ -12,7 +12,7 @@ const authMiddleware = require('./middlewares/authMiddleware');
 const statusController = require('./controllers/statusController');
 const coursesController = require('./controllers/coursesController');
 const usersController = require('./controllers/usersController');
-// const guidesController = require('./controllers/coursesController');
+const guidesController = require('./controllers/guidesController');
 
 const app = express();
 const { port } = configs.app;
@@ -41,11 +41,11 @@ router.get('/courses/:courseId/users', usersController.getCourseUsers);
 // router.patch('/courses/:courseId/users/:userId', usersController.updateUserFromCourse);
 //
 // // Guides
-// router.get('/courses/:courseId/guides', guidesController.getGuidesFromCourse);
-// router.post('/courses/:courseId/guides', guidesController.addGuideToCourse);
+router.get('/courses/:courseId/guides', guidesController.getGuides);
+router.post('/courses/:courseId/guides', guidesController.addGuide);
 // router.get('/courses/:courseId/guides/:guideId', guidesController.getCourseGuide);
-// router.patch('/courses/:courseId/guides/:guideId', guidesController.updateCourseGuide);
-// router.delete('/courses/:courseId/guides/:guideId', guidesController.deleteGuideFromCourse);
+router.put('/courses/:courseId/guides/:guideId', guidesController.updateGuide);
+router.delete('/courses/:courseId/guides/:guideId', guidesController.deleteGuide);
 
 
 app.use(router);

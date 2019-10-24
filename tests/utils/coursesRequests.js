@@ -1,18 +1,9 @@
 const url = require('url');
 const fetch = require('node-fetch');
 const configs = require('../../configs');
+const { doRequest } = require('./requests');
 
 const baseUrl = url.format(configs.app);
-
-const doRequest = async ({ requestUrl, params, token }) => {
-  const requestParams = !params ? {} : params;
-  requestParams.headers = {
-    authorization: token,
-    'Content-Type': 'application/json',
-  };
-  const response = await fetch(requestUrl, requestParams);
-  return { status: response.status, body: await response.json() };
-};
 
 const status = () => {
   const statusUrl = `${baseUrl}/ping`;

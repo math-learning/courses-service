@@ -1,3 +1,5 @@
+const createError = require('http-errors');
+const expressify = require('expressify')();
 const guidesService = require('../services/guidesService');
 
 const getGuides = async (req, res) => {
@@ -10,6 +12,10 @@ const getGuides = async (req, res) => {
 const addGuide = async (req, res) => {
   const { courseId } = req.params;
   const { name, description } = req.body;
+
+  if (!name || !description) {
+    return Promise.reject(createError.BadRequest('name or description has not been provided'));
+  }
   const guide = await guidesService.addGuide({ courseId, name, description });
   return res.status(201).json(guide);
 };
@@ -17,20 +23,20 @@ const addGuide = async (req, res) => {
 const deleteGuide = async (req, res) => {
   const { courseId, guideId } = req.params;
   await guidesService.deleteGuide({ guideId, courseId });
-  return res.status(200);
+  return res.status(200).json({});
 };
 const updateGuide = async (req, res) => {
   const { courseId, guideId } = req.params;
   const { name, description } = req.body;
-  await guidesService.updateGuide({
+  const guide = await guidesService.updateGuide({
     courseId, guideId, name, description
   });
-  return res.status(200).json();
+  return res.status(200).json(guide);
 };
 
-module.exports = {
+module.exports = expressify({
   getGuides,
   addGuide,
   deleteGuide,
   updateGuide,
-};
+});

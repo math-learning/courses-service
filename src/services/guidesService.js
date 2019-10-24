@@ -25,22 +25,20 @@ const addGuide = async ({
 const deleteGuide = async ({
   courseId,
   guideId,
-}) => guides.delete({ courseId, guideId });
+}) => guides.deleteGuide({ courseId, guideId });
 
 const updateGuide = async ({
   courseId,
   guideId,
   name,
   description,
-}) => {
-  const guide = {
-    courseId,
-    guideId,
-    name,
-    description,
-  };
-  guides.update({ guide });
-};
+}) => guides.updateGuide({
+  courseId,
+  guideId,
+  name,
+  description
+});
+
 
 module.exports = {
   getGuides,

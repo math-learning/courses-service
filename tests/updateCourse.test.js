@@ -1,6 +1,7 @@
 const { assert } = require('chai');
 const requests = require('./utils/coursesRequests');
 const { cleanDb } = require('./utils/db');
+const { addCourseMocks } = require('./utils/dbMockFactory');
 
 // Starts the app
 require('../src/app.js');
@@ -14,19 +15,18 @@ describe('Add course', () => {
 
   let finalCourse;
 
-  beforeEach(() => {
-    const name = 'curso';
-    const description = 'un curso mas';
-    finalCourse = { courseId: 'initialcourse', name, description };
-  });
-
   describe('When is successfully added', () => {
     beforeEach(async () => {
-      await requests.addCourse({
-        name: 'initial course',
-        description: 'first description',
-        token: fakeToken
+      const coursesAndCreators = await addCourseMocks({
+        coursesNumber: 1,
+        creatorId: fakeToken
       });
+      const [firstCourse] = coursesAndCreators.courses;
+
+      const name = 'curso';
+      const description = 'un curso mas';
+      finalCourse = { courseId: firstCourse.courseId, name, description };
+
       response = await requests.updateCourse({
         courseId: finalCourse.courseId,
         name: finalCourse.name,

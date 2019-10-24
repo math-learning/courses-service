@@ -1,4 +1,4 @@
-const { assert } = require('chai');
+const { assert, expect } = require('chai');
 const requests = require('./utils/coursesRequests');
 const { cleanDb } = require('./utils/db');
 
@@ -19,7 +19,7 @@ describe('Add course', () => {
       courseToBeAdded = {
         name: 'curso',
         description: 'un curso mas',
-        id: 'curso',
+        courseId: 'curso',
       };
       response = await requests.addCourse({
         name: courseToBeAdded.name,
@@ -32,8 +32,8 @@ describe('Add course', () => {
 
     it('get course should return the course added', async () => {
       response = await requests.getCourses({ token: fakeToken });
-      // const courses = response.body;
-      assert.equal(response.status, 200);
+      const courses = response.body;
+      expect(courses).to.deep.include(courseToBeAdded);
     });
   });
 });

@@ -11,7 +11,7 @@ const getGuides = async ({
   offset,
 }) => knex.select()
   .from(GUIDES_TABLE)
-  .where(snakelize(courseId))
+  .where(snakelize({ courseId }))
   .offset(offset || configs.dbDefault.offset)
   .limit(limit || configs.dbDefault.limit)
   .then(processDbResponse)
@@ -19,11 +19,14 @@ const getGuides = async ({
     if (!response) {
       throw new createError.NotFound('Courses not found');
     }
+    if (!response.length) {
+      return [response];
+    }
     return response;
   });
 
 
-const addGuide = async ({ guide }) => knex.insert(guide)
+const addGuide = async ({ guide }) => knex.insert(snakelize(guide))
   .into(GUIDES_TABLE);
 
 const deleteGuide = async ({
