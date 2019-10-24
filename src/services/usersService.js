@@ -1,4 +1,10 @@
+const createError = require('http-errors');
 const users = require('../databases/usersDb');
+
+const ADMIN_ROLE = 'admin';
+const STUDENT_ROLE = 'student';
+const PROFESSOR_ROLE = 'professor';
+const validRoles = [ADMIN_ROLE, STUDENT_ROLE, PROFESSOR_ROLE];
 
 const getUsers = async ({
   courseId,
@@ -15,7 +21,14 @@ const addUser = async ({
   courseId,
   userId,
   role
-}) => users.addUser({ courseId, userId, role });
+}) => {
+  if (!validRoles.includes(role)) {
+    return Promise.reject(
+      createError.BadRequest(`Invalid role: ${role}. Valid roles: ${validRoles}`)
+    );
+  }
+  return users.addUser({ courseId, userId, role });
+};
 
 const updateUser = async ({
   courseId,
@@ -28,10 +41,16 @@ const deleteUser = async ({
   userId
 }) => users.deleteUser({ userId, courseId });
 
+const isAdmin = async ({ userId, courseId }) => {
+  const user = await getUser({ userId, courseId });
+  return user.role === ADMIN_ROLE;
+};
+
 module.exports = {
   getUsers,
   getUser,
   addUser,
   updateUser,
   deleteUser,
+  isAdmin,
 };

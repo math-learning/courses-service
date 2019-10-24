@@ -35,24 +35,21 @@ const getCoursesByUser = async ({
   });
 
 const getCourses = async ({
-  page,
+  offset,
   limit
-}) => {
-  const { pageSize } = configs.coursesConfig.pageSize;
-  return knex(COURSES_TABLE)
-    .select()
-    .returning('*')
-    .offset(page)
-    .limit(limit || pageSize)
-    .then(processDbResponse)
-    .then((response) => {
-      console.log(response);
-      if (!response) {
-        throw new createError.NotFound('Courses not found');
-      }
-      return response;
-    });
-};
+}) => knex(COURSES_TABLE)
+  .select()
+  .returning('*')
+  .offset(offset || configs.dbDefault.offset)
+  .limit(limit || configs.dbDefault.limit)
+  .then(processDbResponse)
+  .then((response) => {
+    console.log(response);
+    if (!response) {
+      throw new createError.NotFound('Courses not found');
+    }
+    return response;
+  });
 
 const getCourse = async ({ courseId }) => knex(COURSES_TABLE)
   .select()

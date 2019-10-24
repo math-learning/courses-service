@@ -13,6 +13,7 @@ module.exports = (req, res, next) => {
   }
 
   // TODO: users service integration
+  req.context.user = { userId: token };
 
   next();
 };

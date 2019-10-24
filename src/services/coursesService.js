@@ -1,15 +1,24 @@
+const createError = require('http-errors');
 const courses = require('../databases/coursesDb');
+const usersService = require('./usersService');
 
-const getCourse = async ({ courseId }) => courses.getCourse({ courseId });
-
-const getCourses = async ({ page, limit, userToken }) => {
-  // TODO: users service integration for the moment we use the token
-  const userId = userToken;
-  return courses.getCoursesByUser({ page, limit, userId });
+const getCourse = async ({ courseId, userId }) => {
+  if (await usersService.getUser({ courseId, userId }) === null) {
+    return Promise.reject(createError.Unauthorized(
+      `The user with id ${userId} dont belong to the course with id ${courseId}`
+    ));
+  }
+  return courses.getCourse({ courseId });
 };
 
+const getCoursesByUser = async ({
+  page,
+  limit,
+  userId
+}) => courses.getCoursesByUser({ page, limit, userId });
+
 const addCourse = async ({ description, name, creatorId }) => {
-  // TODO: hacer esto mejor
+  // TODO: refactor and think if every user can create courses
   const courseId = name.toLowerCase().replace(' ', '');
   await courses.addCourse({
     name,
@@ -19,28 +28,33 @@ const addCourse = async ({ description, name, creatorId }) => {
   });
 };
 
-const addUserToCourse = async ({
-  userId,
-  courseId,
-  role
-}) => courses.addUserToCourse({ userId, courseId, role });
+const deleteCourse = async ({ userId, courseId }) => {
+  if (!await usersService.isAdmin({ userId, courseId })) {
+    return Promise.reject(createError.Unauthorized());
+  }
+  return courses.deleteCourse({ courseId });
+};
 
-const deleteCourse = async ({ courseId }) => courses.deleteCourse({ courseId });
+const updateCourse = async ({
+  courseId, userId, description, name
+}) => {
+  if (!await usersService.isAdmin({ userId, courseId })) {
+    return Promise.reject(createError.Unauthorized());
+  }
+  return courses.updateCourse({
+    name,
+    description,
+    courseId,
+  });
+};
 
-const updateCourse = async ({ courseId, description, name }) => courses.updateCourse({
-  name,
-  description,
-  courseId,
-});
-
-const getCourseUsers = async ({ courseId }) => courses.getCourseUsers({ courseId });
+const getCourses = async ({ page, limit }) => courses.getCourses({ offset: page * limit, limit });
 
 module.exports = {
   getCourses,
+  getCoursesByUser,
   addCourse,
   getCourse,
-  addUserToCourse,
   deleteCourse,
   updateCourse,
-  getCourseUsers,
 };

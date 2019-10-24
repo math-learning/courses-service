@@ -2,9 +2,6 @@ const { assert } = require('chai');
 const requests = require('./utils/usersRequests');
 const { cleanDb } = require('./utils/db');
 const { addCourseMocks } = require('./utils/dbMockFactory');
-const { snakelize, camilize } = require('../src/utils/dbUtils');
-const configs = require('../configs');
-const knex = require('knex')(configs.db); // eslint-disable-line
 
 require('../src/app.js');
 
@@ -32,13 +29,10 @@ describe('Add User', () => {
 
     it('should return status CREATED', () => assert.equal(response.status, 201));
     it('the user should exist in the db after adding it', async () => {
-      const user = camilize(await knex.select()
-        .from('course_users')
-        .where(snakelize({
-          courseId: userToAdd.courseId,
-          userId: userToAdd.userId,
-        })).first());
-      assert.deepEqual(response.body, user);
+      response = await requests.getUser({
+        userId: userToAdd.userId, courseId: userToAdd.courseId
+      });
+      assert.deepEqual(response.body, userToAdd);
     });
   });
 });

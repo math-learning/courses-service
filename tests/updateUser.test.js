@@ -2,8 +2,6 @@ const { assert } = require('chai');
 const requests = require('./utils/usersRequests');
 const { cleanDb } = require('./utils/db');
 const { addCourseMocks } = require('./utils/dbMockFactory');
-const configs = require('../configs');
-const knex = require('knex')(configs.db); // eslint-disable-line
 
 require('../src/app.js');
 
