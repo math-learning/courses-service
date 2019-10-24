@@ -16,10 +16,11 @@ const getCoursesByUser = async ({
   userId,
   page,
   limit
-}) => knex(COURSE_USERS_TABLE)
-  .select()
+}) => knex
+  .select('courses.course_id', 'courses.description', 'courses.name')
+  .from(COURSE_USERS_TABLE)
   .where(snakelize({ userId }))
-  .returning('*')
+  .leftJoin(COURSES_TABLE, 'courses.course_id', 'course_users.course_id')
   .offset(page || configs.dbDefault.offset)
   .limit(limit || configs.dbDefault.limit)
   .then(processDbResponse)

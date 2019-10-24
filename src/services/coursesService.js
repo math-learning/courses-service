@@ -5,9 +5,7 @@ const getCourse = async ({ courseId }) => courses.getCourse({ courseId });
 const getCourses = async ({ page, limit, userToken }) => {
   // TODO: users service integration for the moment we use the token
   const userId = userToken;
-  const coursesByUser = await courses.getCoursesByUser({ page, limit, userId });
-  const result = coursesByUser.map((c) => getCourse({ courseId: c.courseId }));
-  return Promise.all(result);
+  return courses.getCoursesByUser({ page, limit, userId });
 };
 
 const addCourse = async ({ description, name, creatorId }) => {
