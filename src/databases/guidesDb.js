@@ -45,8 +45,23 @@ const updateGuide = async ({
   .from(GUIDES_TABLE)
   .where(snakelize({ courseId, guideId }));
 
+const getGuide = async ({ courseId, guideId }) => knex.select()
+  .from(GUIDES_TABLE)
+  .where(snakelize({ courseId, guideId }))
+  .then(processDbResponse)
+  .then((response) => {
+    if (!response) {
+      throw new createError.NotFound(`Guide with guideId ${guideId} and courseId ${courseId} not found`);
+    }
+    if (!response.length) {
+      return [response];
+    }
+    return response;
+  });
+
 module.exports = {
   getGuides,
+  getGuide,
   addGuide,
   deleteGuide,
   updateGuide,

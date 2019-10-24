@@ -25,17 +25,31 @@ const deleteGuide = async (req, res) => {
   await guidesService.deleteGuide({ guideId, courseId });
   return res.status(200).json({});
 };
+
 const updateGuide = async (req, res) => {
   const { courseId, guideId } = req.params;
   const { name, description } = req.body;
-  const guide = await guidesService.updateGuide({
+  await guidesService.updateGuide({
     courseId, guideId, name, description
   });
+  const guide = {
+    courseId,
+    guideId,
+    name,
+    description,
+  };
+  return res.status(200).json(guide);
+};
+
+const getGuide = async (req, res) => {
+  const { courseId, guideId } = req.params;
+  const guide = await guidesService.getGuide({ guideId, courseId });
   return res.status(200).json(guide);
 };
 
 module.exports = expressify({
   getGuides,
+  getGuide,
   addGuide,
   deleteGuide,
   updateGuide,

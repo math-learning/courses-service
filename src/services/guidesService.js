@@ -40,8 +40,11 @@ const updateGuide = async ({
 });
 
 
+const getGuide = async ({ courseId, guideId }) => guides.getGuide({ courseId, guideId });
+
 module.exports = {
   getGuides,
+  getGuide,
   addGuide,
   deleteGuide,
   updateGuide,

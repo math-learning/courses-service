@@ -48,9 +48,15 @@ const deleteGuide = async ({ courseId, guideId, token }) => doRequest({
   token,
 });
 
+const getGuide = async ({ courseId, guideId, token }) => doRequest({
+  requestUrl: `${baseUrl}/courses/${courseId}/guides/${guideId}`,
+  token,
+});
+
 module.exports = {
   addGuide: errorWrapper(addGuide),
   getGuides: errorWrapper(getGuides),
   updateGuide: errorWrapper(updateGuide),
   deleteGuide: errorWrapper(deleteGuide),
+  getGuide: errorWrapper(getGuide),
 };

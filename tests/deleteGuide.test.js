@@ -32,5 +32,13 @@ describe('Delete guide', () => {
     });
 
     it('status should be OK', () => assert.equal(response.status, 200));
+    it('get guide should return not found', async () => {
+      response = await requests.getGuide({
+        courseId: guide.courseId,
+        guideId: guide.guideId,
+        token
+      });
+      assert.equal(response.status, 404);
+    });
   });
 });

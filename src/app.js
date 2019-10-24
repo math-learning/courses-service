@@ -43,7 +43,7 @@ router.get('/courses/:courseId/users', usersController.getCourseUsers);
 // // Guides
 router.get('/courses/:courseId/guides', guidesController.getGuides);
 router.post('/courses/:courseId/guides', guidesController.addGuide);
-// router.get('/courses/:courseId/guides/:guideId', guidesController.getCourseGuide);
+router.get('/courses/:courseId/guides/:guideId', guidesController.getGuide);
 router.put('/courses/:courseId/guides/:guideId', guidesController.updateGuide);
 router.delete('/courses/:courseId/guides/:guideId', guidesController.deleteGuide);
 
