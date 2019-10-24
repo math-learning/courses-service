@@ -17,6 +17,7 @@ const addGuide = async (req, res) => {
     return Promise.reject(createError.BadRequest('name or description has not been provided'));
   }
   const guide = await guidesService.addGuide({ courseId, name, description });
+
   return res.status(201).json(guide);
 };
 

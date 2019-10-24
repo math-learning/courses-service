@@ -20,6 +20,21 @@ const getUsers = async ({ courseId, limit, offset }) => knex
     return response;
   });
 
+const getUser = async ({
+  courseId,
+  userId
+}) => knex.select()
+  .from(COURSE_USERS_TABLE)
+  .where(snakelize({ courseId, userId }))
+  .then(processDbResponse)
+  .then((response) => {
+    if (!response) {
+      throw new createError.NotFound(`User with id ${userId} not found for course ${courseId}`);
+    }
+    return response;
+  });
+
+
 const addUser = async ({ userId, courseId, role }) => knex(COURSE_USERS_TABLE)
   .insert(snakelize({
     userId,
@@ -38,6 +53,7 @@ const updateUser = async ({ courseId, userId, role }) => knex
 
 module.exports = {
   getUsers,
+  getUser,
   addUser,
   deleteUser,
   updateUser,

@@ -1,8 +1,4 @@
-const url = require('url');
-const configs = require('../../configs');
-const { doRequest } = require('./requests');
-
-const baseUrl = url.format(configs.app);
+const { doRequest, errorWrapper, baseUrl } = require('./requests');
 
 const addGuide = async ({ token, courseId, guide }) => doRequest({
   requestUrl: `${baseUrl}/courses/${courseId}/guides`,
@@ -12,16 +8,6 @@ const addGuide = async ({ token, courseId, guide }) => doRequest({
   },
   token,
 });
-
-function errorWrapper(funct) {
-  return function inner(...args) {
-    try {
-      return funct(...args);
-    } catch (err) {
-      return err;
-    }
-  };
-}
 
 const getGuides = async ({ courseId, token }) => doRequest({
   requestUrl: `${baseUrl}/courses/${courseId}/guides`,

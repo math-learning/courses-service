@@ -1,9 +1,5 @@
-const url = require('url');
 const fetch = require('node-fetch');
-const configs = require('../../configs');
-const { doRequest } = require('./requests');
-
-const baseUrl = url.format(configs.app);
+const { doRequest, errorWrapper, baseUrl } = require('./requests');
 
 const status = () => {
   const statusUrl = `${baseUrl}/ping`;
@@ -39,16 +35,6 @@ const addCourse = async ({ token, name, description }) => {
     token,
   });
 };
-
-function errorWrapper(funct) {
-  return function inner(...args) {
-    try {
-      return funct(...args);
-    } catch (err) {
-      return err;
-    }
-  };
-}
 
 const updateCourse = async ({
   courseId,

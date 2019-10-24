@@ -35,10 +35,11 @@ router.put('/courses/:courseId', coursesController.updateCourse);
 router.delete('/courses/:courseId', coursesController.deleteCourse);
 
 // Users
-router.get('/courses/:courseId/users', usersController.getCourseUsers);
+router.get('/courses/:courseId/users', usersController.getUsers);
+router.get('/courses/:courseId/users/:userId', usersController.getUser);
 router.post('/courses/:courseId/users', usersController.addUser);
 router.delete('/courses/:courseId/users/:userId', usersController.deleteUser);
-router.patch('/courses/:courseId/users/:userId', usersController.updateUser);
+router.put('/courses/:courseId/users/:userId', usersController.updateUser);
 
 // Guides
 router.get('/courses/:courseId/guides', guidesController.getGuides);

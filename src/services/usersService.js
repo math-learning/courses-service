@@ -6,6 +6,11 @@ const getUsers = async ({
   offset
 }) => users.getUsers({ courseId, limit, offset });
 
+const getUser = async ({
+  userId,
+  courseId,
+}) => users.getUser({ userId, courseId });
+
 const addUser = async ({
   courseId,
   userId,
@@ -25,6 +30,7 @@ const deleteUser = async ({
 
 module.exports = {
   getUsers,
+  getUser,
   addUser,
   updateUser,
   deleteUser,

@@ -1,4 +1,6 @@
 const fetch = require('node-fetch');
+const url = require('url');
+const configs = require('../../configs');
 
 const doRequest = async ({ requestUrl, params, token }) => {
   const requestParams = !params ? {} : params;
@@ -10,6 +12,20 @@ const doRequest = async ({ requestUrl, params, token }) => {
   return { status: response.status, body: await response.json() };
 };
 
+function errorWrapper(funct) {
+  return function inner(...args) {
+    try {
+      return funct(...args);
+    } catch (err) {
+      return err;
+    }
+  };
+}
+
+const baseUrl = url.format(configs.app);
+
 module.exports = {
   doRequest,
+  errorWrapper,
+  baseUrl,
 };
