@@ -113,13 +113,6 @@ const addCourse = async ({
   await trx.commit();
 };
 
-const addUserToCourse = async ({ userId, courseId, role }) => knex(COURSE_USERS_TABLE)
-  .insert(snakelize({
-    userId,
-    courseId,
-    role,
-  }));
-
 const deleteCourse = async ({ courseId }) => {
   const trx = await knex.transaction();
   // TODO: delete on cascade?
@@ -138,19 +131,11 @@ const updateCourse = async ({ courseId, name, description }) => knex(COURSES_TAB
   .update({ name, description })
   .where(snakelize({ courseId }));
 
-// TODO analyze the need for pagination
-const getCourseUsers = async ({ courseId }) => knex(COURSE_USERS_TABLE)
-  .select('user_id', 'role')
-  .where(snakelize({ courseId }))
-  .then(processDbResponse);
-
 module.exports = {
   getCourses,
   addCourse,
   getCoursesByUser,
   getCourse,
-  addUserToCourse,
   deleteCourse,
   updateCourse,
-  getCourseUsers,
 };

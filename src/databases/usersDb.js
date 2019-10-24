@@ -4,11 +4,11 @@ const { processDbResponse, snakelize } = require('../utils/dbUtils');
 const configs = require('../../configs');
 const knex = require('knex')(configs.db); // eslint-disable-line
 
-const USERS_TABLE = 'course_users';
+const COURSE_USERS_TABLE = 'course_users';
 
 const getUsers = async ({ courseId, limit, offset }) => knex
   .select()
-  .from(USERS_TABLE)
+  .from(COURSE_USERS_TABLE)
   .where(snakelize({ courseId }))
   .limit(limit || configs.dbDefault.limit)
   .offset(offset || configs.dbDefault.offset)
@@ -20,9 +20,21 @@ const getUsers = async ({ courseId, limit, offset }) => knex
     return response;
   });
 
-let addUser;
-let deleteUser;
-let updateUser;
+const addUser = async ({ userId, courseId, role }) => knex(COURSE_USERS_TABLE)
+  .insert(snakelize({
+    userId,
+    courseId,
+    role,
+  }));
+
+const deleteUser = async ({ courseId, userId }) => knex.delete()
+  .from(COURSE_USERS_TABLE)
+  .where(snakelize({ courseId, userId }));
+
+const updateUser = async ({ courseId, userId, role }) => knex
+  .update({ role })
+  .from(COURSE_USERS_TABLE)
+  .where(snakelize({ courseId, userId }));
 
 module.exports = {
   getUsers,
