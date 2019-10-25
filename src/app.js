@@ -29,6 +29,7 @@ router.use(authMiddleware);
 
 // Courses
 router.get('/courses', coursesController.getCourses);
+router.get('/my-courses', coursesController.getCoursesByUser);
 router.post('/courses', coursesController.addCourse);
 router.get('/courses/:courseId', coursesController.getCourse);
 router.put('/courses/:courseId', coursesController.updateCourse);
