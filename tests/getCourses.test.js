@@ -26,4 +26,11 @@ describe('Get courses', () => {
 
     it('body has the course', () => assert.deepEqual(response.body, expectedCourses));
   });
+
+  describe('When there are zero courses', () => {
+    it('should return NOT FOUND', async () => {
+      response = await requests.getCourses({ token: fakeToken });
+      assert.equal(response.status, 404);
+    });
+  });
 });

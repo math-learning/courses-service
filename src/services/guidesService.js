@@ -1,4 +1,7 @@
+const createError = require('http-errors');
 const guides = require('../databases/guidesDb');
+const coursesService = require('./coursesService');
+const usersService = require('./usersService');
 
 const getGuides = async ({
   courseId,
@@ -10,7 +13,20 @@ const addGuide = async ({
   courseId,
   name,
   description,
+  userId,
 }) => {
+  if (!await coursesService.courseExists({ courseId })) {
+    return Promise.reject(createError.BadRequest(`course with id: ${courseId} does not exist`));
+  }
+
+  if (!await usersService.isAdmin({ courseId, userId })
+    && !await usersService.isProfessor({ courseId, userId })) {
+    return Promise.reject(createError.Unauthorized(
+      `User with id: ${userId} do not have permission `
+      + `to create guides for the course with id ${courseId}`
+    ));
+  }
+
   const guideId = name.toLowerCase().replace(' ', '');
   const guide = {
     guideId,
@@ -18,6 +34,7 @@ const addGuide = async ({
     name,
     description,
   };
+
   await guides.addGuide({ guide });
   return guide;
 };

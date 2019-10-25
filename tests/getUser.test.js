@@ -23,4 +23,6 @@ describe('Get User', () => {
     it('should return status 200', () => assert.equal(response.status, 200));
     it('response body should be the user', () => assert.deepEqual(response.body, user));
   });
+
+  // TODO: border cases. think about who can access this data.
 });

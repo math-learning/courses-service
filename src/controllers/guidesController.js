@@ -12,11 +12,14 @@ const getGuides = async (req, res) => {
 const addGuide = async (req, res) => {
   const { courseId } = req.params;
   const { name, description } = req.body;
+  const { userId } = req.context.user;
 
   if (!name || !description) {
     return Promise.reject(createError.BadRequest('name or description has not been provided'));
   }
-  const guide = await guidesService.addGuide({ courseId, name, description });
+  const guide = await guidesService.addGuide({
+    courseId, name, description, userId
+  });
 
   return res.status(201).json(guide);
 };

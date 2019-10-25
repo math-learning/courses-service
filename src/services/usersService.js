@@ -10,12 +10,19 @@ const getUsers = async ({
   courseId,
   limit,
   offset
-}) => users.getUsers({ courseId, limit, offset });
+}) => users.getUsers({
+  courseId,
+  limit,
+  offset
+});
 
 const getUser = async ({
   userId,
   courseId,
-}) => users.getUser({ userId, courseId });
+}) => users.getUser({
+  userId,
+  courseId
+});
 
 const addUser = async ({
   courseId,
@@ -27,24 +34,49 @@ const addUser = async ({
       createError.BadRequest(`Invalid role: ${role}. Valid roles: ${validRoles}`)
     );
   }
-  return users.addUser({ courseId, userId, role });
+  return users.addUser({
+    courseId,
+    userId,
+    role
+  });
 };
 
 const updateUser = async ({
   courseId,
   userId,
   role
-}) => users.updateUser({ courseId, userId, role });
+}) => users.updateUser({
+  courseId,
+  userId,
+  role
+});
 
 const deleteUser = async ({
   courseId,
   userId
-}) => users.deleteUser({ userId, courseId });
+}) => users.deleteUser({
+  userId,
+  courseId
+});
 
-const isAdmin = async ({ userId, courseId }) => {
-  const user = await getUser({ userId, courseId });
-  return user.role === ADMIN_ROLE;
-};
+const isAdmin = async ({
+  userId, courseId
+}) => getUser({
+  userId,
+  courseId,
+})
+  .then((user) => user.role === ADMIN_ROLE)
+  .catch(() => false);
+
+const isProfessor = async ({
+  userId,
+  courseId
+}) => getUser({
+  userId,
+  courseId,
+}).then((user) => user.role === PROFESSOR_ROLE)
+  .catch(() => false);
+
 
 module.exports = {
   getUsers,
@@ -53,4 +85,5 @@ module.exports = {
   updateUser,
   deleteUser,
   isAdmin,
+  isProfessor,
 };

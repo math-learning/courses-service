@@ -15,7 +15,7 @@ describe('Add course', () => {
 
   let finalCourse;
 
-  describe('When is successfully added', () => {
+  describe('When the course exists', () => {
     beforeEach(async () => {
       const coursesAndCreators = await addCourseMocks({
         coursesNumber: 1,
@@ -35,11 +35,44 @@ describe('Add course', () => {
       });
     });
 
-    it('status is OK', () => assert.equal(response.status, 200));
+    it('should return status OK', () => assert.equal(response.status, 200));
 
     it('get course should return the course updated', async () => {
       response = await requests.getCourse({ courseId: finalCourse.courseId, token: fakeToken });
       assert.deepEqual(response.body, finalCourse);
     });
   });
+
+  describe('When the user does not have permission', () => {
+    beforeEach(async () => {
+      const coursesAndCreators = await addCourseMocks({
+        coursesNumber: 1,
+        creatorId: 'anotherCreator',
+      });
+      const [firstCourse] = coursesAndCreators.courses;
+
+      response = await requests.updateCourse({
+        courseId: firstCourse.courseId,
+        name: 'new name',
+        description: 'new description',
+        token: fakeToken
+      });
+    });
+
+    it('should return Unauthorized', () => assert.equal(response.status, 401));
+  });
+
+  describe('When the course does not exist', () => {
+    beforeEach(async () => {
+      response = await requests.updateCourse({
+        courseId: 'inexistent',
+        name: 'new name',
+        description: 'new description',
+        token: fakeToken
+      });
+    });
+
+    it('should return NOT FOUND', () => assert.equal(response.status, 404));
+  });
+
 });

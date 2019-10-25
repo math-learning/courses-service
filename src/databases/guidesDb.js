@@ -1,6 +1,6 @@
 const createError = require('http-errors');
 
-const { processDbResponse, snakelize } = require('../utils/dbUtils');
+const { processDbResponse, snakelize, handleConflict } = require('../utils/dbUtils');
 const configs = require('../../configs');
 const knex = require('knex')(configs.db); // eslint-disable-line
 const GUIDES_TABLE = 'guides';
@@ -27,7 +27,8 @@ const getGuides = async ({
 
 
 const addGuide = async ({ guide }) => knex.insert(snakelize(guide))
-  .into(GUIDES_TABLE);
+  .into(GUIDES_TABLE)
+  .catch((err) => handleConflict({ err, resourceName: `Guide with id ${guide.guideId}` }));
 
 const deleteGuide = async ({
   courseId,

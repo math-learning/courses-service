@@ -14,7 +14,7 @@ describe('Get courses', () => {
   before(() => cleanDb());
   afterEach(() => cleanDb());
 
-  describe('When there are courses', () => {
+  describe('When the course exists', () => {
     let expectedCourse;
 
     beforeEach(async () => {
@@ -25,6 +25,14 @@ describe('Get courses', () => {
 
     it('status is OK', () => assert.equal(response.status, 200));
 
-    it('body has the course', () => assert.deepEqual(response.body, expectedCourse));
+    it('body is the course', () => assert.deepEqual(response.body, expectedCourse));
+  });
+
+  describe('When the course does not exist', () => {
+    beforeEach(async () => {
+      response = await requests.getCourse({ token: fakeToken, courseId: 'inexistent' });
+    });
+
+    it('should return NOT FOUND', () => assert.equal(response.status, 404));
   });
 });

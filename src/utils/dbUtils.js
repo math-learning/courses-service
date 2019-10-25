@@ -1,4 +1,5 @@
 const _ = require('lodash');
+const createError = require('http-errors');
 
 const camilize = (obj) => {
   const newObj = {};
@@ -33,9 +34,16 @@ const processDbResponse = (dbObj) => {
   return _.isArray(obj) ? obj.map((item) => camilize(item)) : camilize(obj);
 };
 
+const handleConflict = ({ err, resourceName }) => {
+  if (err.code === '23505') {
+    throw new createError.Conflict(`${resourceName} already exists`);
+  }
+  throw err;
+};
 
 module.exports = {
   camilize,
   snakelize,
-  processDbResponse
+  processDbResponse,
+  handleConflict,
 };

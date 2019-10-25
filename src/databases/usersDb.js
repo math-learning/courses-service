@@ -1,6 +1,6 @@
 const createError = require('http-errors');
 
-const { processDbResponse, snakelize } = require('../utils/dbUtils');
+const { processDbResponse, snakelize, handleConflict } = require('../utils/dbUtils');
 const configs = require('../../configs');
 const knex = require('knex')(configs.db); // eslint-disable-line
 
@@ -40,7 +40,8 @@ const addUser = async ({ userId, courseId, role }) => knex(COURSE_USERS_TABLE)
     userId,
     courseId,
     role,
-  }));
+  }))
+  .catch((err) => handleConflict({ err, resourceName: `User with id ${userId}` }));
 
 const deleteUser = async ({ courseId, userId }) => knex.delete()
   .from(COURSE_USERS_TABLE)

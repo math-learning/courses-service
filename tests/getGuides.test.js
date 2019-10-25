@@ -31,4 +31,12 @@ describe('Get guides', () => {
       assert.deepEqual(response.body, guides);
     });
   });
+
+  describe('When there are zero guides', () => {
+    beforeEach(async () => {
+      response = await requests.getGuides({ courseId: 'id', token });
+    });
+
+    it('should return NOT FOUND', () => assert.equal(response.status, 404));
+  });
 });

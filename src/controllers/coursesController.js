@@ -72,6 +72,13 @@ const updateCourse = async (req, res) => {
   return res.status(200).json({});
 };
 
+const getUserCourses = async (req, res) => {
+  const { userId } = req.context.user;
+  const { page, limit } = req.query;
+  const userCourses = await coursesService.getUserCourses({ page, limit, userId });
+  return res.status(200).json(userCourses);
+};
+
 
 module.exports = expressify({
   getCourses,
@@ -79,4 +86,5 @@ module.exports = expressify({
   getCourse,
   updateCourse,
   deleteCourse,
+  getUserCourses,
 });
