@@ -2,11 +2,9 @@ const createError = require('http-errors');
 const courses = require('../databases/coursesDb');
 const usersService = require('./usersService');
 
-
-
 const getCourse = async ({ courseId, userId }) => {
   if (await usersService.getUser({ courseId, userId }) === null) {
-    return Promise.reject(createError.Unauthorized(
+    return Promise.reject(createError.Forbidden(
       `The user with id ${userId} dont belong to the course with id ${courseId}`
     ));
   }
@@ -36,7 +34,7 @@ const addCourse = async ({ description, name, creatorId }) => {
 
 const deleteCourse = async ({ userId, courseId }) => {
   if (!await usersService.isAdmin({ userId, courseId })) {
-    return Promise.reject(createError.Unauthorized());
+    return Promise.reject(createError.Forbidden());
   }
   return courses.deleteCourse({ courseId });
 };
@@ -49,7 +47,7 @@ const updateCourse = async ({
   }
 
   if (!await usersService.isAdmin({ userId, courseId })) {
-    return Promise.reject(createError.Unauthorized());
+    return Promise.reject(createError.Forbidden());
   }
   return courses.updateCourse({
     name,
@@ -59,7 +57,6 @@ const updateCourse = async ({
 };
 
 const getCourses = async ({ page, limit }) => courses.getCourses({ offset: page * limit, limit });
-
 
 
 module.exports = {

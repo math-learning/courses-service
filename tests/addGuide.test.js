@@ -61,7 +61,7 @@ describe('Add guide', () => {
       response = await requests.addGuide({ courseId, token, guide });
     });
 
-    it('should return Unauthorized', () => assert.equal(response.status, 401));
+    it('should return Forbidden', () => assert.equal(response.status, 403));
   });
 
   describe('When there are missing fields', () => {

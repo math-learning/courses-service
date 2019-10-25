@@ -21,7 +21,7 @@ const addGuide = async ({
 
   if (!await usersService.isAdmin({ courseId, userId })
     && !await usersService.isProfessor({ courseId, userId })) {
-    return Promise.reject(createError.Unauthorized(
+    return Promise.reject(createError.Forbidden(
       `User with id: ${userId} do not have permission `
       + `to create guides for the course with id ${courseId}`
     ));
