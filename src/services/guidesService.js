@@ -44,17 +44,44 @@ const deleteGuide = async ({
   guideId,
 }) => guides.deleteGuide({ courseId, guideId });
 
+const guideExists = async ({ courseId, guideId }) => guides.getGuide({ courseId, guideId })
+  .then(() => true)
+  .catch(() => false);
+
 const updateGuide = async ({
   courseId,
   guideId,
   name,
   description,
-}) => guides.updateGuide({
-  courseId,
-  guideId,
-  name,
-  description
-});
+  userId,
+}) => {
+  if (!await coursesService.courseExists({ courseId })) {
+    return Promise.reject(createError.NotFound(`Course with id: ${courseId} not found`));
+  }
+  if (!await guideExists({ courseId, guideId })) {
+    return Promise.reject(createError.NotFound(
+      `Guide with id ${guideId} not found for course with id ${courseId}`
+    ));
+  }
+
+  if (!await usersService.isAdmin({ courseId, userId })
+    && !await usersService.isProfessor({ courseId, userId })) {
+    return Promise.reject(createError.Forbidden(
+      `User with id: ${userId} do not have permission `
+      + `to create guides for the course with id ${courseId}`
+    ));
+  }
+
+  const guide = {
+    courseId,
+    guideId,
+    name,
+    description,
+  };
+
+  await guides.updateGuide(guide);
+  return guide;
+};
 
 
 const getGuide = async ({ courseId, guideId }) => guides.getGuide({ courseId, guideId });

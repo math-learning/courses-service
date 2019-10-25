@@ -29,4 +29,6 @@ describe('Update User', () => {
       assert.deepEqual(response.body, user);
     });
   });
+
+  // TODO: analyze this issue. Should the admin be the only one capable of updating an user role?
 });

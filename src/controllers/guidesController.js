@@ -31,17 +31,12 @@ const deleteGuide = async (req, res) => {
 };
 
 const updateGuide = async (req, res) => {
+  const { userId } = req.context.user;
   const { courseId, guideId } = req.params;
   const { name, description } = req.body;
-  await guidesService.updateGuide({
-    courseId, guideId, name, description
+  const guide = await guidesService.updateGuide({
+    courseId, guideId, name, description, userId
   });
-  const guide = {
-    courseId,
-    guideId,
-    name,
-    description,
-  };
   return res.status(200).json(guide);
 };
 
