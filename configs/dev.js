@@ -22,5 +22,15 @@ module.exports = {
   dbDefault: {
     limit: 40,
     offset: 0,
-  }
+  },
+  usersService: {
+    url: {
+      protocol: 'http',
+      hostname: 'localhost',
+      port: '7000'
+    },
+    paths: {
+      auth: 'auth'
+    }
+  },
 };

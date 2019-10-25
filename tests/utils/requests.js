@@ -1,6 +1,6 @@
 const fetch = require('node-fetch');
 const url = require('url');
-const configs = require('../../configs');
+const configs = require('../../src/configs')();
 
 const doRequest = async ({ requestUrl, params, token }) => {
   const requestParams = !params ? {} : params;

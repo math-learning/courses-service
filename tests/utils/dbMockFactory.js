@@ -1,4 +1,4 @@
-const configs = require('../../configs');
+const configs = require('../../src/configs')();
 const { snakelize, camilize } = require('../../src/utils/dbUtils');
 const knex = require('knex')(configs.db); // eslint-disable-line
 

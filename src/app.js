@@ -3,7 +3,7 @@ const express = require('express');
 const router = express.Router();
 const bodyParser = require('body-parser');
 
-const configs = require('../configs');
+const configs = require('./configs')();
 const errorMiddleware = require('./middlewares/errorMiddleware');
 const initialMiddleware = require('./middlewares/initialMiddleware');
 const requestLoggerMiddleware = require('./middlewares/requestLoggerMiddleware');
