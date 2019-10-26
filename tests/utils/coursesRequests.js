@@ -11,21 +11,21 @@ const getCourses = async ({ token }) => doRequest({
   token,
 });
 
-const deleteCourse = async ({ token, courseId }) => doRequest({
-  requestUrl: `${baseUrl}/courses/${courseId}`,
+const deleteCourse = async ({ token, course }) => doRequest({
+  requestUrl: `${baseUrl}/courses/${course.courseId}`,
   params: {
     method: 'DELETE'
   },
   token,
 });
 
-const getCourse = async ({ token, courseId }) => doRequest({
-  requestUrl: `${baseUrl}/courses/${courseId}`,
+const getCourse = async ({ token, course }) => doRequest({
+  requestUrl: `${baseUrl}/courses/${course.courseId}`,
   token,
 });
 
-const addCourse = async ({ token, name, description }) => {
-  const data = { name, description };
+const addCourse = async ({ token, course }) => {
+  const data = { name: course.name, description: course.description };
   return doRequest({
     requestUrl: `${baseUrl}/courses`,
     params: {
@@ -36,22 +36,17 @@ const addCourse = async ({ token, name, description }) => {
   });
 };
 
-const updateCourse = async ({
-  courseId,
-  name,
-  description,
-  token,
-}) => doRequest({
-  requestUrl: `${baseUrl}/courses/${courseId}`,
+const updateCourse = async ({ course, token, }) => doRequest({
+  requestUrl: `${baseUrl}/courses/${course.courseId}`,
   params: {
     method: 'PUT',
-    body: JSON.stringify({ name, description }),
+    body: JSON.stringify({ name: course.name, description: course.description }),
   },
   token
 });
 
-const getCourseUsers = async ({ courseId, token }) => doRequest({
-  requestUrl: `${baseUrl}/courses/${courseId}/users`,
+const getCourseUsers = async ({ course, token }) => doRequest({
+  requestUrl: `${baseUrl}/courses/${course.courseId}/users`,
   token
 });
 

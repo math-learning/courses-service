@@ -1,4 +1,4 @@
-const configs = require('../../src/configs')();
+const configs = require('../../configs/test');
 const { snakelize, camilize } = require('../../src/utils/dbUtils');
 const knex = require('knex')(configs.db); // eslint-disable-line
 
@@ -55,7 +55,7 @@ const addCourseMocks = async ({ coursesNumber, creatorId }) => {
     .map(camilize)
     .map((course) => ({ courseId: course.courseId, userId: creatorId }))
     .map(creatorMockFromCourse);
-  await knex('course_users').insert(creators);
+  const creatorsResult = await knex('course_users').insert(creators); // eslint-disable-line
 
   return {
     courses: courses.map(camilize),

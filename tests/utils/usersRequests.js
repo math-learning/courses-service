@@ -5,35 +5,31 @@ const getUsers = async ({ courseId, token }) => doRequest({
   token,
 });
 
-const getUser = async ({ courseId, userId, token }) => doRequest({
-  requestUrl: `${baseUrl}/courses/${courseId}/users/${userId}`,
+const getUser = async ({ user, token }) => doRequest({
+  requestUrl: `${baseUrl}/courses/${user.courseId}/users/${user.userId}`,
   token,
 });
 
-const addUser = async ({
-  courseId, userId, role, token
-}) => doRequest({
-  requestUrl: `${baseUrl}/courses/${courseId}/users`,
+const addUser = async ({ user, token }) => doRequest({
+  requestUrl: `${baseUrl}/courses/${user.courseId}/users`,
   params: {
     method: 'POST',
-    body: JSON.stringify({ userId, role }),
+    body: JSON.stringify({ userId: user.userId, role: user.role }),
   },
   token,
 });
 
-const updateUser = async ({
-  courseId, userId, role, token
-}) => doRequest({
-  requestUrl: `${baseUrl}/courses/${courseId}/users/${userId}`,
+const updateUser = async ({ user, token }) => doRequest({
+  requestUrl: `${baseUrl}/courses/${user.courseId}/users/${user.userId}`,
   params: {
     method: 'PUT',
-    body: JSON.stringify({ role }),
+    body: JSON.stringify({ role: user.role }),
   },
   token,
 });
 
-const deleteUser = async ({ courseId, userId, token }) => doRequest({
-  requestUrl: `${baseUrl}/courses/${courseId}/users/${userId}`,
+const deleteUser = async ({ user, token }) => doRequest({
+  requestUrl: `${baseUrl}/courses/${user.courseId}/users/${user.userId}`,
   params: {
     method: 'DELETE',
   },

@@ -6,7 +6,7 @@
   "scripts": {
     "lint": "NODE_ENV=test eslint src tests db",
     "lint:fix": "NODE_ENV=test eslint --fix src tests db",
-    "test:app": "NODE_ENV=test npm run db:latest && NODE_ENV=test nyc mocha tests",
+    "test:app": "NODE_ENV=test npm run db:latest && NODE_ENV=test nyc --reporter=html --reporter=text mocha tests",
     "test": "npm run lint && npm run test:app",
     "start": "NODE_ENV=development npm run db:latest && npm run db:initial-state && NODE_ENV=development node src/app",
     "start:dynamic": "NODE_ENV=development npm run db:latest && npm run db:initial-state && NODE_ENV=development nodemon src/app",
