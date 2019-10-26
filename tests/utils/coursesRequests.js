@@ -45,8 +45,8 @@ const updateCourse = async ({ course, token, }) => doRequest({
   token
 });
 
-const getCourseUsers = async ({ course, token }) => doRequest({
-  requestUrl: `${baseUrl}/courses/${course.courseId}/users`,
+const getCourseUsers = async ({ courseId, token }) => doRequest({
+  requestUrl: `${baseUrl}/courses/${courseId}/users`,
   token
 });
 

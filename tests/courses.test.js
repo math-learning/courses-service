@@ -3,6 +3,9 @@ const requests = require('./utils/coursesRequests');
 const { cleanDb } = require('./utils/db');
 const mocks = require('./utils/mocks');
 const { addCourseMocks } = require('./utils/dbMockFactory');
+
+process.env.NODE_ENV = 'test';
+
 require('./setup.js');
 
 describe('Course Tests', () => {
@@ -81,14 +84,14 @@ describe('Course Tests', () => {
     });
   });
 
-  describe('Get courses', () => {
+  describe('Get course', () => {
     describe('When the course exists', () => {
       let expectedCourse;
 
       beforeEach(async () => {
         const coursesAndCreators = await addCourseMocks({ coursesNumber: 1, creatorId: token });
         expectedCourse = coursesAndCreators.courses[0]; // eslint-disable-line
-        response = await requests.getCourse({ token, course });
+        response = await requests.getCourse({ token, course: expectedCourse });
       });
 
       it('status is OK', () => assert.equal(response.status, 200));

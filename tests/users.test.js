@@ -1,9 +1,13 @@
-const { assert, expect } = require('chai');
+const chai = require('chai');
+
+const { assert, expect } = chai;
 const deepEqualInAnyOrder = require('deep-equal-in-any-order');
 const requests = require('./utils/usersRequests');
 const { cleanDb } = require('./utils/db');
 const { addCourseMocks, addCourseUserMocks } = require('./utils/dbMockFactory');
 const mocks = require('./utils/mocks');
+
+chai.use(deepEqualInAnyOrder);
 
 process.env.NODE_ENV = 'test';
 require('../src/app.js');
@@ -52,8 +56,8 @@ describe('Users Tests', () => {
       it('should return BAD REQUEST', async () => {
         const coursesAndCreators = await addCourseMocks({ coursesNumber: 1, creatorId: 'creator' });
         const { courseId } = coursesAndCreators.courses[0];
-        user = { role: 'student', courseId, userId: token, };
-        response = await requests.addUser({ user, token });
+        const userWithoutRole = { courseId, userId: token, };
+        response = await requests.addUser({ user: userWithoutRole, token });
         assert.equal(response.status, 400);
       });
     });
@@ -84,7 +88,7 @@ describe('Users Tests', () => {
         const coursesAndCreators = await addCourseMocks({ coursesNumber: 1, creatorId: token });
         const { courseId } = coursesAndCreators.courses[0];
         [user] = coursesAndCreators.creators.filter((c) => c.courseId === courseId);
-        response = await requests.getUser({ courseId, userId: token, token });
+        response = await requests.getUser({ user, token });
       });
 
       it('should return status 200', () => assert.equal(response.status, 200));
@@ -105,7 +109,7 @@ describe('Users Tests', () => {
 
       it('should return status 200', () => assert.equal(response.status, 200));
       it('get user should return the updated user', async () => {
-        response = await requests.getUser({ courseId: user.courseId, userId: user.userId, token });
+        response = await requests.getUser({ user, token });
         assert.deepEqual(response.body, user);
       });
     });
@@ -126,7 +130,7 @@ describe('Users Tests', () => {
         const mockUsers = await addCourseUserMocks({ courseId, usersAmount: 3, role: 'student' });
         expectedUsers = [creator];
         mockUsers.forEach((u) => expectedUsers.push(u));
-        response = await requests.getCourseUsers({ token, user });
+        response = await requests.getUsers({ token, courseId });
       });
 
       it('status is OK', () => assert.equal(response.status, 200));

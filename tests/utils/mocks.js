@@ -12,7 +12,7 @@ const mockUsersService = () => {
     .persist()
     .get('/auth')
       .reply(function(uri, requestBody) { // eslint-disable-line
-      const { authorization } = this.req.headers;
+      const [authorization] = this.req.headers.authorization;
       return { userId: authorization };
     });
 };
