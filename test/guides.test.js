@@ -123,7 +123,11 @@ describe('Guides Tests', () => {
 
       it('status should be OK', () => assert.equal(response.status, 200));
       it('should return the existing guides', () => {
-        assert.deepEqual(response.body, guides);
+        const expectedGuides = guides.map(($guide) => ({
+          ...$guide,
+          guideStatus: 'draft'
+        }));
+        assert.deepEqual(response.body, expectedGuides);
       });
     });
 
