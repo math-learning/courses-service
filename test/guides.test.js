@@ -23,7 +23,7 @@ describe('Guides Tests', () => {
       description: 'primera guia de la materia'
     };
   });
-  afterEach(cleanDb);
+  afterEach(() => cleanDb());
 
   describe('Add guide', () => {
     describe('When is successfully added', () => {
@@ -59,29 +59,32 @@ describe('Guides Tests', () => {
     });
 
     describe('When there are missing fields', () => {
-      it('it should return BAD REQUEST', async () => {
-        cleanDb();
-        const coursesAndCreators = await addCourseMocks({
-          coursesNumber: 1,
-          creatorId: token,
+      describe('when the name is missing', () => {
+        beforeEach(async () => {
+          guide = {
+            courseId,
+            name: 'guia 1',
+          };
+          response = await requests.addGuide({ token, guide });
         });
-        courseId = coursesAndCreators.courses[0].courseId;
 
-        guide = {
-          courseId,
-          description: 'primera guia de la materia'
-        };
-        // Missing name
-        response = await requests.addGuide({ token, guide });
-        assert.equal(response.status, 400);
+        it('it should return BAD REQUEST', () => {
+          assert.equal(response.status, 400);
+        });
+      });
 
-        guide = {
-          courseId,
-          name: 'guia 1',
-        };
-        // Missing description
-        response = await requests.addGuide({ token, guide });
-        assert.equal(response.status, 400);
+      describe('when the description is missing', () => {
+        beforeEach(async () => {
+          guide = {
+            courseId,
+            name: 'guia 1',
+          };
+          response = await requests.addGuide({ token, guide });
+        });
+
+        it('it should return BAD REQUEST', () => {
+          assert.equal(response.status, 400);
+        });
       });
     });
 
