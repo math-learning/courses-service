@@ -36,6 +36,7 @@ exports.down = (knex) => {
     DROP TABLE guides;
     DROP TABLE course_users;
     DROP TYPE user_role;
+    DROP TYPE status;
   `;
   return knex.raw(query);
 };

@@ -138,5 +138,4 @@ describe('Users Tests', () => {
       it('body has the course', () => expect(response.body).to.deep.equalInAnyOrder(expectedUsers));
     });
   });
-
 });

@@ -195,7 +195,7 @@ describe('Guides Tests', () => {
           description: 'new description'
         };
         const professorUser = { courseId, userId: 'pepe', role: 'professor' };
-        usersRequests.addUser({ user: professorUser, token });
+        await usersRequests.addUser({ user: professorUser, token });
         response = await requests.updateGuide({ guide: finalGuide, token: professorUser.userId });
       });
 
