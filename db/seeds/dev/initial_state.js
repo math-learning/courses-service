@@ -4,7 +4,7 @@ exports.seed = async (knex) => {
   const currentGuides = await knex('guides').select();
   const currentUsers = await knex('course_users').select();
 
-  if (!currentCourses.length) {;
+  if (!currentCourses.length) {
     await knex('courses').insert([
       {
         course_id: 'coursename',
