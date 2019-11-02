@@ -11,8 +11,8 @@ describe('Guides Tests', () => {
   let guide;
   let courseId;
 
+  before(cleanDb);
   beforeEach(async () => {
-    cleanDb();
     mocks.mockUsersService();
     const coursesAndCreators = await addCourseMocks({ coursesNumber: 1, creatorId: token, });
     courseId = coursesAndCreators.courses[0].courseId;

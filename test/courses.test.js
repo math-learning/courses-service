@@ -14,8 +14,8 @@ describe('Course Tests', () => {
   let course;
   let courses;
 
+  before(cleanDb);
   beforeEach(() => {
-    cleanDb();
     mocks.mockUsersService({});
     course = { name: 'curso', description: 'description', courseId: 'curso' };
     courses = [];
