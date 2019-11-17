@@ -19,13 +19,13 @@ describe('Guides Tests', () => {
       userId: 'professor-id',
       name: 'Licha',
       email: 'licha@gmail',
-      rol: 'professor'
+      role: 'professor'
     };
     studentProfile = {
       userId: 'student-id',
       name: 'Pepito',
       email: 'student@gmail',
-      rol: 'student'
+      role: 'student'
     };
     const coursesAndCreators = await addCourseMocks({
       coursesNumber: 1,

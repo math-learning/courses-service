@@ -1,4 +1,5 @@
 const express = require('express');
+const cors = require('cors');
 
 const router = express.Router();
 const bodyParser = require('body-parser');
@@ -16,6 +17,8 @@ const guidesController = require('./controllers/guidesController');
 
 const app = express();
 const { port } = configs.app;
+
+app.use(cors());
 
 //  Body parser middleware
 app.use(bodyParser.json());

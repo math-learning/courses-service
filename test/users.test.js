@@ -25,7 +25,7 @@ describe('Users Tests', () => {
       userId: 'professor-id',
       name: 'Licha',
       email: 'licha@gmail',
-      rol: 'professor'
+      role: 'professor'
     };
   });
   afterEach(cleanDb);
