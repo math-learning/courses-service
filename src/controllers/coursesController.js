@@ -1,9 +1,12 @@
 const createError = require('http-errors');
 const expressify = require('expressify')();
-// const logger = require('../utils/logger.js');
 const coursesService = require('../services/coursesService');
 
-const getCourses = async (req, res) => {
+/**
+ * Search published courses
+ *
+ */
+const searchCourses = async (req, res) => {
   const { page, limit } = req.query;
   const { userId } = req.context.user;
 
@@ -72,18 +75,23 @@ const updateCourse = async (req, res) => {
   return res.status(200).json({});
 };
 
+/**
+ * Get courses by user
+ *
+ */
 const getUserCourses = async (req, res) => {
   const { userId } = req.context.user;
   const { page, limit } = req.query;
   const userCourses = await coursesService.getUserCourses({ page, limit, userId });
+
   return res.status(200).json(userCourses);
 };
 
 
 module.exports = expressify({
-  getCourses,
   addCourse,
   getCourse,
+  searchCourses,
   updateCourse,
   deleteCourse,
   getUserCourses,

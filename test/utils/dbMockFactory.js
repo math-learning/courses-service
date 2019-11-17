@@ -28,7 +28,7 @@ const addCourseUserMocks = async ({ courseId, usersAmount, role }) => {
 const creatorMockFromCourse = ({ courseId, userId }) => snakelize({
   courseId,
   userId,
-  role: 'admin',
+  role: 'creator',
 });
 
 const guideMock = ({ courseId, index }) => snakelize({
@@ -46,16 +46,15 @@ const addGuideMocks = async ({ courseId, guidesAmount }) => {
   return guides.map(camilize);
 };
 
-const addCourseMocks = async ({ coursesNumber, creatorId }) => {
-  const courses = arrayWithKeys(coursesNumber)
-    .map(courseMock);
+const addCourseMocks = async ({ coursesNumber, creator }) => {
+  const courses = arrayWithKeys(coursesNumber).map(courseMock);
   await knex('courses').insert(courses);
 
   const creators = courses
     .map(camilize)
-    .map((course) => ({ courseId: course.courseId, userId: creatorId }))
+    .map((course) => ({ courseId: course.courseId, userId: creator.userId }))
     .map(creatorMockFromCourse);
-  const creatorsResult = await knex('course_users').insert(creators); // eslint-disable-line
+  await knex('course_users').insert(creators);
 
   return {
     courses: courses.map(camilize),

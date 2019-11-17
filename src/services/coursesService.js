@@ -1,30 +1,45 @@
 const createError = require('http-errors');
-const courses = require('../databases/coursesDb');
+const coursesDb = require('../databases/coursesDb');
 const usersService = require('./usersService');
 
+/**
+ * Get an specific course for the user
+ *
+ */
 const getCourse = async ({ courseId, userId }) => {
   if (await usersService.getUser({ courseId, userId }) === null) {
     return Promise.reject(createError.Forbidden(
       `The user with id ${userId} dont belong to the course with id ${courseId}`
     ));
   }
-  return courses.getCourse({ courseId });
+  return coursesDb.getCourse({ courseId }); // TODO: Estaria bueno que la query incluya las guias
 };
 
-const courseExists = async ({ courseId }) => courses.getCourse({ courseId })
-  .then(() => true)
-  .catch(() => false);
-
+/**
+ * Get courses by user
+ *
+ */
 const getUserCourses = async ({
   page,
   limit,
   userId
-}) => courses.getUserCourses({ page, limit, userId });
+}) => {
+  const courses = await coursesDb.getUserCourses({ page, limit, userId });
 
+  if (!courses.length) {
+    return courses;
+  }
+  return coursesDb.includeProfessorsToCourses({ courses });
+};
+
+/**
+ * Add course
+ *
+ */
 const addCourse = async ({ description, name, creatorId }) => {
   // TODO: refactor and think if every user can create courses
   const courseId = name.toLowerCase().replace(' ', '');
-  await courses.addCourse({
+  await coursesDb.addCourse({
     name,
     description,
     creatorId,
@@ -32,39 +47,65 @@ const addCourse = async ({ description, name, creatorId }) => {
   });
 };
 
+/**
+ * Delete course
+ *
+ */
 const deleteCourse = async ({ userId, courseId }) => {
-  if (!await usersService.isAdmin({ userId, courseId })) {
+  const isAdmin = await usersService.isAdmin({ userId, courseId });
+  if (!isAdmin) {
     return Promise.reject(createError.Forbidden());
   }
-  return courses.deleteCourse({ courseId });
+  return coursesDb.deleteCourse({ courseId });
 };
 
+/**
+ * Update course
+ *
+ */
 const updateCourse = async ({
   courseId, userId, description, name
 }) => {
-  if (!await courseExists({ courseId })) {
+  if (!await doesCourseExists({ courseId })) {
     return Promise.reject(createError.NotFound(`Course with id ${courseId} not found`));
   }
 
-  if (!await usersService.isAdmin({ userId, courseId })) {
+  const isAdmin = await usersService.isAdmin({ userId, courseId });
+  if (!isAdmin) {
     return Promise.reject(createError.Forbidden());
   }
-  return courses.updateCourse({
+  return coursesDb.updateCourse({
     name,
     description,
     courseId,
   });
 };
 
-const getCourses = async ({ page, limit }) => courses.getCourses({ offset: page * limit, limit });
+/**
+ * Search published courses
+ *
+ */
+const searchCourses = async ({ page, limit, userId }) => {
+  const courses = await coursesDb.searchCourses({ offset: page * limit, limit, userId });
+
+  if (!courses.length) {
+    return courses;
+  }
+  return coursesDb.includeProfessorsToCourses({ courses });
+};
+
+
+const doesCourseExists = async ({ courseId }) => coursesDb.getCourse({ courseId })
+  .then(() => true)
+  .catch(() => false);
 
 
 module.exports = {
-  getCourses,
-  getUserCourses,
   addCourse,
+  doesCourseExists,
   getCourse,
+  getUserCourses,
   deleteCourse,
-  updateCourse,
-  courseExists,
+  searchCourses,
+  updateCourse
 };
