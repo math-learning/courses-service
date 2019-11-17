@@ -4,6 +4,7 @@ exports.seed = async (knex) => {
   const currentGuides = await knex('guides').select();
   const currentUsers = await knex('course_users').select();
 
+  // Professors in users service
   const lucas = {
     user_id: '111975156652135962164'
   };
@@ -13,11 +14,16 @@ exports.seed = async (knex) => {
   const mendez = {
     user_id: 'mendez-id'
   };
+  const juanma = {
+    user_id: 'juanma-id'
+  };
+
+  // Students in users service
   const licha = {
     user_id: 'licha-id'
   };
-  const juanma = {
-    user_id: 'juanma-id'
+  const pillud = {
+    user_id: 'pillud-id'
   };
 
   const courses = [{
@@ -35,13 +41,13 @@ exports.seed = async (knex) => {
   }, {
     course_id: 'fisica-ii-curso-2',
     name: 'Fisica II - Curso 2',
-    description: null,
+    description: 'Curso de Fisica II. Inscribite si estás dispuesto a sufrir, sino anda a jugar a la play',
     course_status: 'published',
     created_at: '2019-11-16T20:55:28.423Z',
   }, {
     course_id: 'algebra-ii-curso-2',
     name: 'Algebra II - Curso 3',
-    description: null,
+    description: 'Un camino de ida... la gloria o el fracaso los separa un signo',
     course_status: 'published',
     created_at: '2019-11-16T20:55:28.423Z',
   }];
@@ -75,7 +81,7 @@ exports.seed = async (knex) => {
     course_id: 'fisica-ii-curso-2',
     role: 'creator'
   }, {
-    ...licha,
+    ...juanma,
     course_id: 'fisica-ii-curso-2',
     role: 'professor'
   }, {
@@ -85,20 +91,12 @@ exports.seed = async (knex) => {
   }];
 
   const students = [{
-    ...lucas,
-    course_id: 'fisica-ii-curso-2',
+    ...pillud,
+    course_id: 'analisis-matematico-infinito-curso-2',
     role: 'student'
   }, {
-    ...diego,
-    course_id: 'fisica-ii-curso-2',
-    role: 'student'
-  }, {
-    ...lucas,
-    course_id: 'algebra-ii-curso-2',
-    role: 'student'
-  }, {
-    ...diego,
-    course_id: 'algebra-ii-curso-2',
+    ...licha,
+    course_id: 'analisis-matematico-infinito-curso-2',
     role: 'student'
   }];
 
