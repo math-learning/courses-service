@@ -17,7 +17,7 @@ const getUserCourses = async ({
   page,
   limit
 }) => knex
-  .select() // TODO: PROBAR SI ESTO NO HACE FALTA
+  .select()
   .from(COURSE_USERS_TABLE)
   .where(snakelize({ userId }))
   .leftJoin(COURSES_TABLE, 'courses.course_id', 'course_users.course_id')
@@ -46,7 +46,7 @@ const searchCourses = async ({
   .where('course_status', 'published')
   .modify((queryBuilder) => {
     if (userId) {
-      queryBuilder.whereNotExist(function filter() {
+      queryBuilder.whereNotExists(function filter() {
         this.select()
           .from(COURSE_USERS_TABLE)
           .where('user_id', userId)
@@ -129,7 +129,9 @@ const deleteCourse = async ({ courseId }) => {
  */
 const updateCourse = async ({ courseId, name, description }) => knex(COURSES_TABLE)
   .update({ name, description })
-  .where(snakelize({ courseId }));
+  .where(snakelize({ courseId }))
+  .returning('*')
+  .then(processDbResponse);
 
 /**
  * Given some courses, the professors are added to them

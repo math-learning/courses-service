@@ -60,7 +60,7 @@ const deleteUser = async ({
   courseId
 });
 
-const isAdmin = async ({
+const isCreator = async ({
   userId, courseId
 }) => getUser({
   userId,
@@ -85,6 +85,6 @@ module.exports = {
   addUser,
   updateUser,
   deleteUser,
-  isAdmin, // TODO: SACAR EL IS ADMIN
+  isCreator,
   hasEditPermission
 };

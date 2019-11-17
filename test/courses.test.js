@@ -11,6 +11,7 @@ require('./setup.js');
 describe('Course Tests', () => {
   const token = 'diego';
   let response;
+  let studentProfile;
   let professorProfile;
   let course;
   let courses;
@@ -28,6 +29,12 @@ describe('Course Tests', () => {
       name: 'Licha',
       email: 'licha@gmail',
       rol: 'professor'
+    };
+    studentProfile = {
+      userId: 'student-id',
+      name: 'Pepito',
+      email: 'student@gmail',
+      rol: 'student'
     };
   });
   afterEach(cleanDb);
@@ -123,7 +130,7 @@ describe('Course Tests', () => {
         response = await requests.deleteCourse({ token, course: courseToDelete });
       });
 
-      it('status is OK', () => assert.equal(response.status, 200));
+      it('status is OK', () => assert.equal(response.status, 204));
 
       it('get deleted course returns 404', async () => {
         mocks.mockUsersService({ profile: professorProfile });
@@ -146,7 +153,12 @@ describe('Course Tests', () => {
         });
         expectedCourse = {
           ...coursesAndCreators.courses[0],
-          courseStatus: 'draft'
+          courseStatus: 'draft',
+          professors: [{
+            courseId: coursesAndCreators.courses[0].courseId,
+            role: 'creator',
+            userId: professorProfile.userId
+          }]
         };
         response = await requests.getCourse({ token, course: expectedCourse });
       });
@@ -166,33 +178,65 @@ describe('Course Tests', () => {
     });
   });
 
-  describe('Get courses', () => {
+  describe('Get user courses', () => {
     describe('When there are courses', () => {
       let expectedCourses;
 
-      beforeEach(async () => {
-        mocks.mockUsersService({ profile: professorProfile });
+      describe('and the courses belongs to the user', () => {
+        beforeEach(async () => {
+          mocks.mockUsersService({ profile: professorProfile });
 
-        const coursesAndCreators = await addCourseMocks({
+          const coursesAndCreators = await addCourseMocks({
+            coursesNumber: 3,
+            creator: professorProfile
+          });
+          expectedCourses = coursesAndCreators.courses.map(($course) => ({
+            ...$course,
+            courseStatus: 'draft',
+            userId: professorProfile.userId,
+            role: 'creator',
+            professors: [{
+              courseId: $course.courseId,
+              userId: professorProfile.userId,
+              role: 'creator'
+            }]
+          }));
+          response = await requests.getUserCourses({ token });
+        });
+
+        it('status is OK', () => assert.equal(response.status, 200));
+        it('body has the course', () => assert.deepEqual(sanitizeResponse(response.body), expectedCourses));
+      });
+
+      describe('and the user is not matriculed in the course', () => {
+        beforeEach(async () => {
+          mocks.mockUsersService({ profile: studentProfile });
+
+          await addCourseMocks({
+            coursesNumber: 3,
+            creator: professorProfile
+          });
+          response = await requests.getUserCourses({ token });
+        });
+
+        it('status is OK', () => assert.equal(response.status, 200));
+        it('body has the course', () => assert.deepEqual(response.body, []));
+      });
+    });
+
+    describe('When the user does not have courses', () => {
+      beforeEach(async () => {
+        await addCourseMocks({
           coursesNumber: 3,
           creator: professorProfile
         });
-        expectedCourses = coursesAndCreators.courses.map(($course) => ({
-          ...$course,
-          courseStatus: 'draft',
-          userId: professorProfile.userId, // TODO
-          role: 'creator',
-          professors: [{
-            courseId: $course.courseId,
-            userId: professorProfile.userId,
-            role: 'creator'
-          }]
-        }));
+
+        mocks.mockUsersService({ profile: studentProfile });
         response = await requests.getUserCourses({ token });
       });
 
       it('status is OK', () => assert.equal(response.status, 200));
-      it('body has the course', () => assert.deepEqual(sanitizeResponse(response.body), expectedCourses));
+      it('body has the course', () => assert.deepEqual(response.body, []));
     });
 
     describe('When there are zero courses', () => {
@@ -200,6 +244,95 @@ describe('Course Tests', () => {
         mocks.mockUsersService({ profile: professorProfile });
 
         response = await requests.getUserCourses({ token });
+      });
+
+      it('should return an empty array', () => {
+        assert.deepEqual(response.body, []);
+      });
+    });
+  });
+
+  describe('Search courses', () => {
+    describe('When there are courses', () => {
+      describe('and they has not been published', () => {
+        beforeEach(async () => {
+          mocks.mockUsersService({ profile: studentProfile });
+
+          await addCourseMocks({
+            coursesNumber: 3,
+            courseStatus: 'draft',
+            creator: professorProfile
+          });
+          response = await requests.searchCourses({ token });
+        });
+
+        it('status is OK', () => assert.equal(response.status, 200));
+        it('body is empty', () => assert.deepEqual(response.body, []));
+      });
+
+      describe('and they has been published', () => {
+        let expectedCourses;
+
+        beforeEach(async () => {
+          mocks.mockUsersService({ profile: studentProfile });
+
+          const coursesAndCreators = await addCourseMocks({
+            coursesNumber: 3,
+            courseStatus: 'published',
+            creator: professorProfile
+          });
+          expectedCourses = coursesAndCreators.courses.map(($course) => ({
+            ...$course,
+            courseStatus: 'published',
+            professors: [{
+              courseId: $course.courseId,
+              userId: professorProfile.userId,
+              role: 'creator'
+            }]
+          }));
+          response = await requests.searchCourses({ token });
+        });
+
+        it('body has the courses', () => assert.deepEqual(sanitizeResponse(response.body), expectedCourses));
+      });
+
+      describe('and they has been published but the user is already matriculated', () => {
+        beforeEach(async () => {
+          mocks.mockUsersService({ profile: professorProfile });
+
+          await addCourseMocks({
+            coursesNumber: 3,
+            courseStatus: 'published',
+            creator: professorProfile
+          });
+
+          response = await requests.searchCourses({ token });
+        });
+
+        it('body is empty', () => assert.deepEqual(response.body, []));
+      });
+    });
+
+    describe('When the user does not have courses', () => {
+      beforeEach(async () => {
+        await addCourseMocks({
+          coursesNumber: 3,
+          creator: professorProfile
+        });
+
+        mocks.mockUsersService({ profile: studentProfile });
+        response = await requests.getUserCourses({ token });
+      });
+
+      it('status is OK', () => assert.equal(response.status, 200));
+      it('body has the course', () => assert.deepEqual(response.body, []));
+    });
+
+    describe('When there are zero courses', () => {
+      beforeEach(async () => {
+        mocks.mockUsersService({ profile: professorProfile });
+
+        response = await requests.searchCourses({ token });
       });
 
       it('should return an empty array', () => {
@@ -227,7 +360,12 @@ describe('Course Tests', () => {
           courseId: firstCourse.courseId,
           name,
           description,
-          courseStatus: 'draft'
+          courseStatus: 'draft',
+          professors: [{
+            courseId: firstCourse.courseId,
+            role: 'creator',
+            userId: professorProfile.userId
+          }]
         };
 
         response = await requests.updateCourse({ course: finalCourse, token });

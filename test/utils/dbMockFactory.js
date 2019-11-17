@@ -4,10 +4,11 @@ const knex = require('knex')(configs.db); // eslint-disable-line
 
 const arrayWithKeys = (keysAmount) => [...Array(keysAmount).keys()];
 
-const courseMock = (index) => snakelize({
+const courseMock = ({ index, courseStatus }) => snakelize({
   courseId: `coursename${index}`,
   name: `course name ${index}`,
-  description: `course description ${index}`
+  description: `course description ${index}`,
+  courseStatus
 });
 
 const courseUserMock = ({ courseId, index, role }) => snakelize({
@@ -46,8 +47,8 @@ const addGuideMocks = async ({ courseId, guidesAmount }) => {
   return guides.map(camilize);
 };
 
-const addCourseMocks = async ({ coursesNumber, creator }) => {
-  const courses = arrayWithKeys(coursesNumber).map(courseMock);
+const addCourseMocks = async ({ coursesNumber, courseStatus, creator }) => {
+  const courses = arrayWithKeys(coursesNumber).map((index) => courseMock({ index, courseStatus }));
   await knex('courses').insert(courses);
 
   const creators = courses

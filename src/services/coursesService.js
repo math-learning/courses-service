@@ -7,12 +7,18 @@ const usersService = require('./usersService');
  *
  */
 const getCourse = async ({ courseId, userId }) => {
-  if (await usersService.getUser({ courseId, userId }) === null) {
+  const user = await usersService.getUser({ courseId, userId });
+
+  if (!user) {
     return Promise.reject(createError.Forbidden(
       `The user with id ${userId} dont belong to the course with id ${courseId}`
     ));
   }
-  return coursesDb.getCourse({ courseId }); // TODO: Estaria bueno que la query incluya las guias
+  // TODO: Estaria bueno que la query incluya las guias
+  const course = await coursesDb.getCourse({ courseId });
+  const coursesWithProfessors = await coursesDb.includeProfessorsToCourses({ courses: [course] });
+
+  return coursesWithProfessors[0];
 };
 
 /**
@@ -37,9 +43,9 @@ const getUserCourses = async ({
  *
  */
 const addCourse = async ({ description, name, creatorId }) => {
-  // TODO: refactor and think if every user can create courses
-  const courseId = name.toLowerCase().replace(' ', '');
-  await coursesDb.addCourse({
+  const courseId = name.toLowerCase().replace(' ', '-');
+
+  return coursesDb.addCourse({
     name,
     description,
     creatorId,
@@ -52,8 +58,8 @@ const addCourse = async ({ description, name, creatorId }) => {
  *
  */
 const deleteCourse = async ({ userId, courseId }) => {
-  const isAdmin = await usersService.isAdmin({ userId, courseId });
-  if (!isAdmin) {
+  const isCreator = await usersService.isCreator({ userId, courseId });
+  if (!isCreator) {
     return Promise.reject(createError.Forbidden());
   }
   return coursesDb.deleteCourse({ courseId });
@@ -70,8 +76,8 @@ const updateCourse = async ({
     return Promise.reject(createError.NotFound(`Course with id ${courseId} not found`));
   }
 
-  const isAdmin = await usersService.isAdmin({ userId, courseId });
-  if (!isAdmin) {
+  const isCreator = await usersService.isCreator({ userId, courseId });
+  if (!isCreator) {
     return Promise.reject(createError.Forbidden());
   }
   return coursesDb.updateCourse({

@@ -23,7 +23,8 @@ const addGuide = async ({
   description,
   userId,
 }) => {
-  if (!await coursesService.doesCourseExists({ courseId })) {
+  const doesCourseExist = await coursesService.doesCourseExists({ courseId });
+  if (!doesCourseExist) {
     return Promise.reject(createError.BadRequest(`course with id: ${courseId} does not exist`));
   }
 
@@ -67,7 +68,8 @@ const updateGuide = async ({
   description,
   userId,
 }) => {
-  if (!await coursesService.doesCourseExists({ courseId })) {
+  const doesCourseExist = await coursesService.doesCourseExists({ courseId });
+  if (!doesCourseExist) {
     return Promise.reject(createError.NotFound(`Course with id: ${courseId} not found`));
   }
   if (!await doesGuideExists({ courseId, guideId })) {

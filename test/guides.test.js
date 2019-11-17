@@ -6,8 +6,8 @@ const { addCourseMocks, addGuideMocks } = require('./utils/dbMockFactory');
 const mocks = require('./utils/mocks');
 
 describe('Guides Tests', () => {
-  let response;
   const token = 'diego';
+  let response;
   let guide;
   let courseId;
   let studentProfile;
@@ -134,7 +134,7 @@ describe('Guides Tests', () => {
         response = await requests.deleteGuide({ guide, token });
       });
 
-      it('status should be OK', () => assert.equal(response.status, 200));
+      it('status should be OK', () => assert.equal(response.status, 204));
 
       it('get guide should return not found', async () => {
         mocks.mockUsersService({ profile: professorProfile });

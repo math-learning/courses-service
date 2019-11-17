@@ -105,7 +105,7 @@ describe('Users Tests', () => {
         response = await requests.deleteUser({ user, token });
       });
 
-      it('should return status 200', () => assert.equal(response.status, 200));
+      it('should return status 200', () => assert.equal(response.status, 204));
       it('get user should return 404 after deleting the user', async () => {
         mocks.mockUsersService({ profile: professorProfile });
 
