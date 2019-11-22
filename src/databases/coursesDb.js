@@ -62,7 +62,7 @@ const searchCourses = async ({
       });
     }
     if (search) {
-      queryBuilder.whereRaw('name ~ ?', search);
+      queryBuilder.whereRaw('lower(name) ~ lower(?)', search);
     }
   })
   .offset(offset || configs.dbDefault.offset)

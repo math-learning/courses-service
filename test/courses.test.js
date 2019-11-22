@@ -366,6 +366,14 @@ describe('Course Tests', () => {
           assert.deepEqual(courseIds, [am2]);
         });
 
+        it('search by "ANALISIS2"', async () => {
+          mocks.mockUsersService({ profile: studentProfile });
+          response = await requests.searchCourses({ token, search: 'ANALISIS2' });
+          const courseIds = response.body.map((c) => c.courseId);
+
+          assert.deepEqual(courseIds, [am2]);
+        });
+
         it('search by "algeb"', async () => {
           mocks.mockUsersService({ profile: studentProfile });
           response = await requests.searchCourses({ token, search: 'algeb' });
