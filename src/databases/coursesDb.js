@@ -7,6 +7,7 @@ const knex = require('knex')(configs.db); // eslint-disable-line
 
 const COURSES_TABLE = 'courses';
 const COURSE_USERS_TABLE = 'course_users';
+
 const VISIBLE_FIELDS_TO_RETURN = [
   'course_id',
   'name',
@@ -173,6 +174,10 @@ const includeProfessorsToCourses = async ({ courses }) => {
   }));
 };
 
+/**
+ * Inserts a new course
+ *
+ */
 const insertNewCourse = ({
   trx,
   name,

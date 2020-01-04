@@ -66,7 +66,11 @@ typings/
 .vscode
 
 # General
+<<<<<<< HEAD
 .DS_Store
+=======
+*.DS_Store
+>>>>>>> 057b1667db56519f6b0b2fca815086f9d2a0bdb4
 .AppleDouble
 .LSOverride
 

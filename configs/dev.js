@@ -1,19 +1,31 @@
-const resolveDbHost = () => {
+// TODO: get it from  env
+
+const dockerHosts = {
+  db: 'courses-db',
+  usersService: 'users-service'
+};
+
+const localhosts = {
+  db: 'localhost',
+  usersService: 'localhost'
+};
+
+const resolveHosts = () => {
   const { DOCKER } = process.env;
-  return DOCKER ? 'db' : 'localhost';
+  return DOCKER ? dockerHosts : localhosts;
 };
 
 module.exports = {
   app: {
     protocol: 'http',
-    hostname: 'localhost',
+    hostname: '0.0.0.0',
     port: '5001'
   },
   db: {
     client: 'pg',
     version: '10.10',
     connection: {
-      host: resolveDbHost(),
+      host: resolveHosts().db,
       user: 'postgres',
       password: 'postgres',
       database: 'courses_service'
@@ -27,11 +39,12 @@ module.exports = {
     usersService: {
       url: {
         protocol: 'http',
-        hostname: 'localhost',
+        hostname: resolveHosts().usersService,
         port: '7000'
       },
       paths: {
-        auth: 'login'
+        auth: 'login',
+        users: 'users/profile'
       }
     },
   }
