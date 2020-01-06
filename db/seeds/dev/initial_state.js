@@ -271,7 +271,7 @@ exports.seed = async (knex) => {
   }, []);
 
   const guidesForDefaultCourses = defaultCourses.reduce((acum, course) => {
-    const guides = defaultGuides.map((guide) => ({
+    const guides = especialGuides.map((guide) => ({
       ...guide,
       course_id: course.course_id
     }));
