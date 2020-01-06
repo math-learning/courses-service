@@ -169,8 +169,8 @@ exports.seed = async (knex) => {
   }];
 
 
-  // Empty courses
-  const emptyCourses = [{
+  // Default courses
+  const defaultCourses = [{
     course_id: 'alg-III',
     name: 'Algebra III',
     description: 'Tan difícil como parece',
@@ -214,8 +214,8 @@ exports.seed = async (knex) => {
     created_at: '2019-08-11T20:55:28.423Z',
   }];
 
-  const idsOfEmptyCourses = ['alg-III', 'alg-IV', 'fisica-cuantica', 'am-easy', 'am-easy-ii', 'am-medium'];
-  const usersOfEmptyCourses = idsOfEmptyCourses.reduce((acum, courseId) => {
+  const idsOfDefaultCourses = ['alg-III', 'alg-IV', 'fisica-cuantica', 'am-easy', 'am-easy-ii', 'am-medium'];
+  const usersOfDefaultCourses = idsOfDefaultCourses.reduce((acum, courseId) => {
     const defaultUsers = [{
       ...mendez,
       course_id: courseId,
@@ -270,7 +270,7 @@ exports.seed = async (knex) => {
     ];
   }, []);
 
-  const guidesForEmptyCourses = emptyCourses.reduce((acum, course) => {
+  const guidesForDefaultCourses = defaultCourses.reduce((acum, course) => {
     const guides = defaultGuides.map((guide) => ({
       ...guide,
       course_id: course.course_id
@@ -286,7 +286,7 @@ exports.seed = async (knex) => {
   // Inserting
   const courses = [
     ...greatCourses,
-    ...emptyCourses
+    ...defaultCourses
   ];
 
   const users = [
@@ -295,12 +295,12 @@ exports.seed = async (knex) => {
     ...usersOfAlgeII,
     ...usersOfAlgoII,
     ...usersOfProba,
-    ...usersOfEmptyCourses
+    ...usersOfDefaultCourses
   ];
 
   const guides = [
     ...guidesForGreatCourses,
-    ...guidesForEmptyCourses
+    ...guidesForDefaultCourses
   ];
 
   if (!currentCourses.length) {
