@@ -234,7 +234,7 @@ exports.seed = async (knex) => {
 
 
   // Guides
-  const defaultGuides = [{
+  const defaultGuides = [{ // eslint-disable-line
     guide_id: 'guide-i',
     name: 'Primera guía',
     description: 'Esta es la primera guía que vas a resolver',
@@ -259,7 +259,7 @@ exports.seed = async (knex) => {
   }];
 
   const guidesForGreatCourses = greatCourses.reduce((acum, course) => {
-    const guides = defaultGuides.concat(especialGuides).map((guide) => ({
+    const guides = especialGuides.map((guide) => ({
       ...guide,
       course_id: course.course_id
     }));
