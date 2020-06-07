@@ -13,8 +13,8 @@ const getUsersActivity = async ({ context, courseId }) => {
     const byMonth = groupByActivity(byYear.objs[year], 'month');
 
     const activityMonths = byMonth.list.map((month) => {
-      const daysWithActivity = byMonth.objs[month];
-      const daysByMonth = new Date(year, month, 0).getDate();
+      const daysWithActivity = byMonth.objs[month] || [];
+      const daysByMonth = new Date(year, month - 1, 0).getDate();
 
       // if some day there was not activity, then the count of users is 0
       const activityDays = [];
