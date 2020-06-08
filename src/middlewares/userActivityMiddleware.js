@@ -21,12 +21,13 @@ module.exports = async (req, res, next) => {
   const { day, month, year } = lastUserActivity;
   const lastDate = new Date(year, month - 1, day);
   const newDate = new Date();
-  const today = new Date(newDate.getFullYear(), newDate.getMonth(), newDate.getUTCDate());
+  const today = new Date(newDate.getFullYear(), newDate.getMonth(), newDate.getDate());
 
-  const diffTime = today.getTime() - lastDate.getTime();
+  const diffTime = Math.floor(today.getTime() - lastDate.getTime());
+  const dayTime = 1000 * 60 * 60 * 24;
 
   // just saving one activity per day
-  if (diffTime > 0) {
+  if (Math.floor(diffTime / dayTime) > 0) {
     await usersDb.registerUserActivity({ courseId, userId });
   }
   next();
